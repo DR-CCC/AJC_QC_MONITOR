@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="90" fill="#1a1f2e"/>
+  <rect x="40" y="40" width="432" height="432" rx="70" fill="#242938"/>
+  <text x="256" y="230" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-weight="800" font-size="130" letter-spacing="4" fill="#e2e8f0">AJS</text>
+  <rect x="80" y="260" width="352" height="4" rx="2" fill="#2d3748"/>
+  <text x="256" y="380" text-anchor="middle" font-family="'Segoe UI',system-ui,sans-serif" font-weight="700" font-size="110" letter-spacing="8" fill="#4299e1">QC</text>
+  <circle cx="420" cy="100" r="28" fill="#48bb78" opacity="0.9"/>
+</svg>

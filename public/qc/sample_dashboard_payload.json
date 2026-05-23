@@ -1,0 +1,400 @@
+{
+  "summary": {
+    "total_inspection_qty": 1316,
+    "total_defective_qty": 92,
+    "defect_rate": 0.0699,
+    "line_count": 6
+  },
+  "lines": [
+    {
+      "date": "2025-08-01",
+      "line": "L1",
+      "brand": "",
+      "product_code": "PKS",
+      "item_name": "CAMERA CUBE V2 XL",
+      "color": "",
+      "inspection_qty": 100,
+      "defective_qty": 5,
+      "defect_rate": 0.05,
+      "defects": {
+        "DEF-11": 5
+      }
+    },
+    {
+      "date": "2025-04-01",
+      "line": "L1",
+      "brand": "PKD",
+      "product_code": "PKD-R1",
+      "item_name": "SLING 10L",
+      "color": "OCEAN",
+      "inspection_qty": 300,
+      "defective_qty": 21,
+      "defect_rate": 0.07,
+      "defects": {
+        "DEF-02": 2,
+        "DEF-07": 1,
+        "DEF-10": 3,
+        "DEF-11": 4,
+        "DEF-19": 2,
+        "DEF-20": 1,
+        "DEF-21": 1,
+        "DEF-22": 1,
+        "DEF-30": 1,
+        "DEF-32": 2,
+        "DEF-33": 3
+      }
+    },
+    {
+      "date": "2025-04-01",
+      "line": "L2",
+      "brand": "PKD",
+      "product_code": "PKS",
+      "item_name": "CAMERA CUBE V2 XL",
+      "color": "BLACK",
+      "inspection_qty": 231,
+      "defective_qty": 12,
+      "defect_rate": 0.0519,
+      "defects": {
+        "DEF-02": 1,
+        "DEF-04": 1,
+        "DEF-10": 2,
+        "DEF-11": 6,
+        "DEF-32": 2
+      }
+    },
+    {
+      "date": "2025-04-01",
+      "line": "L3",
+      "brand": "PKD",
+      "product_code": "PKD-R1",
+      "item_name": "30L BB",
+      "color": "OCEAN",
+      "inspection_qty": 77,
+      "defective_qty": 7,
+      "defect_rate": 0.0909,
+      "defects": {
+        "DEF-10": 3,
+        "DEF-11": 4
+      }
+    },
+    {
+      "date": "2025-04-01",
+      "line": "L3",
+      "brand": "PKD",
+      "product_code": "PKD-R1",
+      "item_name": "30L BB",
+      "color": "KELP",
+      "inspection_qty": 44,
+      "defective_qty": 4,
+      "defect_rate": 0.0909,
+      "defects": {
+        "DEF-10": 2,
+        "DEF-11": 2
+      }
+    },
+    {
+      "date": "2025-04-01",
+      "line": "L3",
+      "brand": "PKD",
+      "product_code": "PKD-R1",
+      "item_name": "20L BB",
+      "color": "KELP",
+      "inspection_qty": 22,
+      "defective_qty": 2,
+      "defect_rate": 0.0909,
+      "defects": {
+        "DEF-10": 1,
+        "DEF-11": 1
+      }
+    },
+    {
+      "date": "2025-04-01",
+      "line": "L3",
+      "brand": "PKD",
+      "product_code": "PKD-R1",
+      "item_name": "15L ZIP",
+      "color": "KELP",
+      "inspection_qty": 22,
+      "defective_qty": 2,
+      "defect_rate": 0.0909,
+      "defects": {
+        "DEF-10": 1,
+        "DEF-11": 1
+      }
+    },
+    {
+      "date": "2025-04-01",
+      "line": "L3-C",
+      "brand": "PKD",
+      "product_code": "PKD-R1",
+      "item_name": "ZIP 20L",
+      "color": "KELP",
+      "inspection_qty": 33,
+      "defective_qty": 3,
+      "defect_rate": 0.0909,
+      "defects": {
+        "DEF-10": 1,
+        "DEF-11": 2
+      }
+    },
+    {
+      "date": "2025-04-01",
+      "line": "L4-B",
+      "brand": "PKD",
+      "product_code": "PKD-R3",
+      "item_name": "SHOE POUCH",
+      "color": "ECLIPSE",
+      "inspection_qty": 225,
+      "defective_qty": 15,
+      "defect_rate": 0.0667,
+      "defects": {
+        "DEF-10": 5,
+        "DEF-11": 1,
+        "DEF-12": 3,
+        "DEF-20": 3,
+        "DEF-32": 3
+      }
+    },
+    {
+      "date": "2025-04-01",
+      "line": "L5",
+      "brand": "PKD",
+      "product_code": "PKD-R1",
+      "item_name": "PACKING CUBE M",
+      "color": "IBIS",
+      "inspection_qty": 223,
+      "defective_qty": 14,
+      "defect_rate": 0.0628,
+      "defects": {
+        "DEF-10": 4,
+        "DEF-11": 7,
+        "DEF-32": 3
+      }
+    },
+    {
+      "date": "2025-04-01",
+      "line": "L5",
+      "brand": "PKD",
+      "product_code": "PKD-R1",
+      "item_name": "PACKING CUBE S",
+      "color": "OCEAN",
+      "inspection_qty": 39,
+      "defective_qty": 7,
+      "defect_rate": 0.1795,
+      "defects": {
+        "DEF-10": 5,
+        "DEF-34": 2
+      }
+    }
+  ],
+  "alerts": [
+    {
+      "alert_id": "2025-08-01-L1-defect_rate",
+      "created_at": "2026-05-21T02:29:53",
+      "severity": "warning",
+      "line": "L1",
+      "product_code": "PKS",
+      "item_name": "CAMERA CUBE V2 XL",
+      "metric": "defect_rate",
+      "defect_code": null,
+      "current_value": 0.05,
+      "threshold": 0.05,
+      "message": "L1 defect rate 5.00% exceeded threshold 5.00%."
+    },
+    {
+      "alert_id": "2025-08-01-L1-DEF-11",
+      "created_at": "2026-05-21T02:29:53",
+      "severity": "warning",
+      "line": "L1",
+      "product_code": "PKS",
+      "item_name": "CAMERA CUBE V2 XL",
+      "metric": "repeated_defect",
+      "defect_code": "DEF-11",
+      "current_value": 5,
+      "threshold": 5,
+      "message": "L1 repeated defect DEF-11 STITCHING count 5."
+    },
+    {
+      "alert_id": "2025-04-01-L1-defect_rate",
+      "created_at": "2026-05-21T02:29:53",
+      "severity": "warning",
+      "line": "L1",
+      "product_code": "PKD-R1",
+      "item_name": "SLING 10L",
+      "metric": "defect_rate",
+      "defect_code": null,
+      "current_value": 0.07,
+      "threshold": 0.05,
+      "message": "L1 defect rate 7.00% exceeded threshold 5.00%."
+    },
+    {
+      "alert_id": "2025-04-01-L2-defect_rate",
+      "created_at": "2026-05-21T02:29:53",
+      "severity": "warning",
+      "line": "L2",
+      "product_code": "PKS",
+      "item_name": "CAMERA CUBE V2 XL",
+      "metric": "defect_rate",
+      "defect_code": null,
+      "current_value": 0.0519,
+      "threshold": 0.05,
+      "message": "L2 defect rate 5.19% exceeded threshold 5.00%."
+    },
+    {
+      "alert_id": "2025-04-01-L2-DEF-11",
+      "created_at": "2026-05-21T02:29:53",
+      "severity": "warning",
+      "line": "L2",
+      "product_code": "PKS",
+      "item_name": "CAMERA CUBE V2 XL",
+      "metric": "repeated_defect",
+      "defect_code": "DEF-11",
+      "current_value": 6,
+      "threshold": 5,
+      "message": "L2 repeated defect DEF-11 STITCHING count 6."
+    },
+    {
+      "alert_id": "2025-04-01-L3-defect_rate",
+      "created_at": "2026-05-21T02:29:53",
+      "severity": "critical",
+      "line": "L3",
+      "product_code": "PKD-R1",
+      "item_name": "30L BB",
+      "metric": "defect_rate",
+      "defect_code": null,
+      "current_value": 0.0909,
+      "threshold": 0.08,
+      "message": "L3 defect rate 9.09% exceeded critical threshold 8.00%."
+    },
+    {
+      "alert_id": "2025-04-01-L3-defect_rate",
+      "created_at": "2026-05-21T02:29:53",
+      "severity": "critical",
+      "line": "L3",
+      "product_code": "PKD-R1",
+      "item_name": "30L BB",
+      "metric": "defect_rate",
+      "defect_code": null,
+      "current_value": 0.0909,
+      "threshold": 0.08,
+      "message": "L3 defect rate 9.09% exceeded critical threshold 8.00%."
+    },
+    {
+      "alert_id": "2025-04-01-L3-defect_rate",
+      "created_at": "2026-05-21T02:29:53",
+      "severity": "critical",
+      "line": "L3",
+      "product_code": "PKD-R1",
+      "item_name": "20L BB",
+      "metric": "defect_rate",
+      "defect_code": null,
+      "current_value": 0.0909,
+      "threshold": 0.08,
+      "message": "L3 defect rate 9.09% exceeded critical threshold 8.00%."
+    },
+    {
+      "alert_id": "2025-04-01-L3-defect_rate",
+      "created_at": "2026-05-21T02:29:53",
+      "severity": "critical",
+      "line": "L3",
+      "product_code": "PKD-R1",
+      "item_name": "15L ZIP",
+      "metric": "defect_rate",
+      "defect_code": null,
+      "current_value": 0.0909,
+      "threshold": 0.08,
+      "message": "L3 defect rate 9.09% exceeded critical threshold 8.00%."
+    },
+    {
+      "alert_id": "2025-04-01-L3-C-defect_rate",
+      "created_at": "2026-05-21T02:29:53",
+      "severity": "critical",
+      "line": "L3-C",
+      "product_code": "PKD-R1",
+      "item_name": "ZIP 20L",
+      "metric": "defect_rate",
+      "defect_code": null,
+      "current_value": 0.0909,
+      "threshold": 0.08,
+      "message": "L3-C defect rate 9.09% exceeded critical threshold 8.00%."
+    },
+    {
+      "alert_id": "2025-04-01-L4-B-defect_rate",
+      "created_at": "2026-05-21T02:29:53",
+      "severity": "warning",
+      "line": "L4-B",
+      "product_code": "PKD-R3",
+      "item_name": "SHOE POUCH",
+      "metric": "defect_rate",
+      "defect_code": null,
+      "current_value": 0.0667,
+      "threshold": 0.05,
+      "message": "L4-B defect rate 6.67% exceeded threshold 5.00%."
+    },
+    {
+      "alert_id": "2025-04-01-L4-B-DEF-10",
+      "created_at": "2026-05-21T02:29:53",
+      "severity": "warning",
+      "line": "L4-B",
+      "product_code": "PKD-R3",
+      "item_name": "SHOE POUCH",
+      "metric": "repeated_defect",
+      "defect_code": "DEF-10",
+      "current_value": 5,
+      "threshold": 5,
+      "message": "L4-B repeated defect DEF-10 ASSEMBLE count 5."
+    },
+    {
+      "alert_id": "2025-04-01-L5-defect_rate",
+      "created_at": "2026-05-21T02:29:53",
+      "severity": "warning",
+      "line": "L5",
+      "product_code": "PKD-R1",
+      "item_name": "PACKING CUBE M",
+      "metric": "defect_rate",
+      "defect_code": null,
+      "current_value": 0.0628,
+      "threshold": 0.05,
+      "message": "L5 defect rate 6.28% exceeded threshold 5.00%."
+    },
+    {
+      "alert_id": "2025-04-01-L5-DEF-11",
+      "created_at": "2026-05-21T02:29:53",
+      "severity": "warning",
+      "line": "L5",
+      "product_code": "PKD-R1",
+      "item_name": "PACKING CUBE M",
+      "metric": "repeated_defect",
+      "defect_code": "DEF-11",
+      "current_value": 7,
+      "threshold": 5,
+      "message": "L5 repeated defect DEF-11 STITCHING count 7."
+    },
+    {
+      "alert_id": "2025-04-01-L5-defect_rate",
+      "created_at": "2026-05-21T02:29:53",
+      "severity": "critical",
+      "line": "L5",
+      "product_code": "PKD-R1",
+      "item_name": "PACKING CUBE S",
+      "metric": "defect_rate",
+      "defect_code": null,
+      "current_value": 0.1795,
+      "threshold": 0.08,
+      "message": "L5 defect rate 17.95% exceeded critical threshold 8.00%."
+    },
+    {
+      "alert_id": "2025-04-01-L5-DEF-10",
+      "created_at": "2026-05-21T02:29:53",
+      "severity": "warning",
+      "line": "L5",
+      "product_code": "PKD-R1",
+      "item_name": "PACKING CUBE S",
+      "metric": "repeated_defect",
+      "defect_code": "DEF-10",
+      "current_value": 5,
+      "threshold": 5,
+      "message": "L5 repeated defect DEF-10 ASSEMBLE count 5."
+    }
+  ]
+}

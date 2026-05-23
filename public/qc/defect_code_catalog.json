@@ -1,0 +1,303 @@
+[
+  {
+    "code": "DEF-01",
+    "category": "MATERIAL",
+    "category_label": "MATERIAL",
+    "name": "SHELL",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-02",
+    "category": "MATERIAL",
+    "category_label": "MATERIAL",
+    "name": "LINING",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-03",
+    "category": "MATERIAL",
+    "category_label": "MATERIAL",
+    "name": "TRIM",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-04",
+    "category": "MATERIAL",
+    "category_label": "MATERIAL",
+    "name": "WEBBING BINDING",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-05",
+    "category": "MATERIAL",
+    "category_label": "MATERIAL",
+    "name": "ZIPPER",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-06",
+    "category": "MATERIAL",
+    "category_label": "MATERIAL",
+    "name": "RIVET",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-07",
+    "category": "MATERIAL",
+    "category_label": "MATERIAL",
+    "name": "LOGO",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-08",
+    "category": "MATERIAL",
+    "category_label": "MATERIAL",
+    "name": "THREAD",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-09",
+    "category": "MATERIAL",
+    "category_label": "MATERIAL",
+    "name": "COLOR",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-10",
+    "category": "WORKMANSHIP_CONSTRUCTION",
+    "category_label": "WORKMANSHIP & CONSTRUCTION",
+    "name": "ASSEMBLE",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-11",
+    "category": "WORKMANSHIP_CONSTRUCTION",
+    "category_label": "WORKMANSHIP & CONSTRUCTION",
+    "name": "STITCHING",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-12",
+    "category": "WORKMANSHIP_CONSTRUCTION",
+    "category_label": "WORKMANSHIP & CONSTRUCTION",
+    "name": "BARTACK",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-13",
+    "category": "WORKMANSHIP_CONSTRUCTION",
+    "category_label": "WORKMANSHIP & CONSTRUCTION",
+    "name": "VISUAL",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-14",
+    "category": "WORKMANSHIP_CONSTRUCTION",
+    "category_label": "WORKMANSHIP & CONSTRUCTION",
+    "name": "SHAPE",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-15",
+    "category": "WORKMANSHIP_CONSTRUCTION",
+    "category_label": "WORKMANSHIP & CONSTRUCTION",
+    "name": "BALANCE",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-16",
+    "category": "WORKMANSHIP_CONSTRUCTION",
+    "category_label": "WORKMANSHIP & CONSTRUCTION",
+    "name": "MISSING",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-17",
+    "category": "WORKMANSHIP_CONSTRUCTION",
+    "category_label": "WORKMANSHIP & CONSTRUCTION",
+    "name": "PRINT",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-18",
+    "category": "WORKMANSHIP_CONSTRUCTION",
+    "category_label": "WORKMANSHIP & CONSTRUCTION",
+    "name": "EMBROIDERY",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-19",
+    "category": "FUNCTION_MEASUREMENT",
+    "category_label": "FUNCTION AND MEASUREMENT",
+    "name": "ZIPPER",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-20",
+    "category": "FUNCTION_MEASUREMENT",
+    "category_label": "FUNCTION AND MEASUREMENT",
+    "name": "SNAP / RIVET",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-21",
+    "category": "FUNCTION_MEASUREMENT",
+    "category_label": "FUNCTION AND MEASUREMENT",
+    "name": "HARDWARE",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-22",
+    "category": "FUNCTION_MEASUREMENT",
+    "category_label": "FUNCTION AND MEASUREMENT",
+    "name": "MAGNET",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-23",
+    "category": "FUNCTION_MEASUREMENT",
+    "category_label": "FUNCTION AND MEASUREMENT",
+    "name": "OVERALL SIZE",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-24",
+    "category": "FUNCTION_MEASUREMENT",
+    "category_label": "FUNCTION AND MEASUREMENT",
+    "name": "EXTERIOR SIZE",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-25",
+    "category": "FUNCTION_MEASUREMENT",
+    "category_label": "FUNCTION AND MEASUREMENT",
+    "name": "INTERIOR SIZE",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-26",
+    "category": "FUNCTION_MEASUREMENT",
+    "category_label": "FUNCTION AND MEASUREMENT",
+    "name": "WEBBING PART SIZE",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-27",
+    "category": "FUNCTION_MEASUREMENT",
+    "category_label": "FUNCTION AND MEASUREMENT",
+    "name": "SHOULDER STRAP SIZE",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-28",
+    "category": "FUNCTION_MEASUREMENT",
+    "category_label": "FUNCTION AND MEASUREMENT",
+    "name": "HANDLE SIZE",
+    "severity_hint": "warning"
+  },
+  {
+    "code": "DEF-29",
+    "category": "CLEANLINESS",
+    "category_label": "CLEANLINESS",
+    "name": "THREAD ENDS",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-30",
+    "category": "CLEANLINESS",
+    "category_label": "CLEANLINESS",
+    "name": "GLUE MARK",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-31",
+    "category": "CLEANLINESS",
+    "category_label": "CLEANLINESS",
+    "name": "DIRTY / OIL MARK",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-32",
+    "category": "CLEANLINESS",
+    "category_label": "CLEANLINESS",
+    "name": "STAIN MARK",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-33",
+    "category": "CLEANLINESS",
+    "category_label": "CLEANLINESS",
+    "name": "PEN/CHARK MARK",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-34",
+    "category": "LABEL_PACKING",
+    "category_label": "LABEL & PACKING",
+    "name": "SEWING LABEL",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-35",
+    "category": "LABEL_PACKING",
+    "category_label": "LABEL & PACKING",
+    "name": "HANGTAG HEADER CARD",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-36",
+    "category": "LABEL_PACKING",
+    "category_label": "LABEL & PACKING",
+    "name": "STICKER",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-37",
+    "category": "LABEL_PACKING",
+    "category_label": "LABEL & PACKING",
+    "name": "PACKING DEFECT",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-38",
+    "category": "LABEL_PACKING",
+    "category_label": "LABEL & PACKING",
+    "name": "MISSING PARTS",
+    "severity_hint": "info"
+  },
+  {
+    "code": "DEF-39",
+    "category": "SAFETY_REGULATION",
+    "category_label": "SAFETY & REGULATION",
+    "name": "BROKEN NEEDLE",
+    "severity_hint": "critical"
+  },
+  {
+    "code": "DEF-40",
+    "category": "SAFETY_REGULATION",
+    "category_label": "SAFETY & REGULATION",
+    "name": "SHARP EDGE",
+    "severity_hint": "critical"
+  },
+  {
+    "code": "DEF-41",
+    "category": "SAFETY_REGULATION",
+    "category_label": "SAFETY & REGULATION",
+    "name": "MOLD",
+    "severity_hint": "critical"
+  },
+  {
+    "code": "DEF-42",
+    "category": "SAFETY_REGULATION",
+    "category_label": "SAFETY & REGULATION",
+    "name": "INSECT",
+    "severity_hint": "critical"
+  },
+  {
+    "code": "DEF-43",
+    "category": "SAFETY_REGULATION",
+    "category_label": "SAFETY & REGULATION",
+    "name": "SMELL",
+    "severity_hint": "critical"
+  }
+]

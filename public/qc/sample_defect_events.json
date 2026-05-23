@@ -1,0 +1,28 @@
+[
+  {
+    "event_id": "evt-2025-08-01-0001",
+    "created_at": "2025-08-01T09:00:00",
+    "line": "L1",
+    "process": "STITCHING",
+    "worker_id": "W-1024",
+    "product_code": "PKS",
+    "item_name": "CAMERA CUBE V2 XL",
+    "defect_code": "DEF-11",
+    "defect_count": 2,
+    "inspection_qty": 50,
+    "note": "Uneven stitch found during in-line QC."
+  },
+  {
+    "event_id": "evt-2025-08-01-0002",
+    "created_at": "2025-08-01T09:10:00",
+    "line": "L1",
+    "process": "STITCHING",
+    "worker_id": "W-1025",
+    "product_code": "PKS",
+    "item_name": "CAMERA CUBE V2 XL",
+    "defect_code": "DEF-11",
+    "defect_count": 3,
+    "inspection_qty": 50,
+    "note": "Repeated stitch defect on same line."
+  }
+]
