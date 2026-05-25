@@ -27,7 +27,7 @@ function formFromEvent(evt) {
 
 export default function LineQCPage({
   line, allEvents, onAddEvent, onUpdateEvent, onDeleteEvent,
-  catalog, lineAlerts, onBack, now,
+  catalog, lineAlerts, fromDashboard, onBack, now,
 }) {
   const [session, setSession] = useState(() => loadLineSession(line));
   const [editingSession, setEditingSession] = useState(() => {
@@ -140,7 +140,9 @@ export default function LineQCPage({
   return (
     <div className="line-qc-page">
       <div className="lqc-header">
-        <button className="lqc-back-btn" onClick={onBack}>← 전체 현황</button>
+        <button className="lqc-back-btn" onClick={onBack}>
+          {fromDashboard ? '← 생산 대시보드' : '← 전체 현황'}
+        </button>
         <div className="lqc-title">
           <span className="lqc-line-badge-big">{line}</span>
           <span className="lqc-title-label">QC Monitor</span>

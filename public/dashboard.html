@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AJ Solutions · Production Monitoring</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #FFFFFF;
+  --bg-2: #F7F8FA;
+  --bg-3: #EFF1F4;
+  --surface: #FFFFFF;
+  --border: #E4E7EC;
+  --border-hi: #CDD2DA;
+  --blue: #2A8FCB;
+  --blue-deep: #1E6FA0;
+  --blue-soft: #E8F2FA;
+  --blue-strong: #D1E5F4;
+  --black: #0E1116;
+  --text: #14181F;
+  --text-2: #4A5260;
+  --text-3: #8A93A0;
+  --text-4: #B8BEC8;
+  --ok: #16A34A;
+  --warn: #D97706;
+  --bad: #DC2626;
+  --ok-soft: #DCFCE7;
+  --warn-soft: #FEF3C7;
+  --bad-soft: #FEE2E2;
+  --font-display: 'Archivo', sans-serif;
+  --font-body: 'IBM Plex Sans KR', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--bg-2); font-family: var(--font-body); color: var(--text); min-height: 100vh; }
+
+/* ─── 파일 업로드 화면 ─── */
+.upload-screen {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.upload-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+  padding: 48px 56px; max-width: 560px; width: 100%; text-align: center;
+  box-shadow: 0 8px 32px rgba(14,17,22,0.04);
+}
+.upload-logo { width: 64px; height: 64px; margin: 0 auto 20px; object-fit: contain; }
+.upload-brand {
+  font-family: var(--font-display); font-size: 18px; font-weight: 700;
+  letter-spacing: 0.08em; color: var(--black); margin-bottom: 4px;
+}
+.upload-sub {
+  font-family: var(--font-display); font-size: 11px; letter-spacing: 0.18em;
+  color: var(--text-3); text-transform: uppercase; margin-bottom: 28px; font-weight: 500;
+}
+
+.dropzone {
+  border: 2px dashed var(--border-hi); border-radius: 12px;
+  padding: 40px 24px; cursor: pointer; transition: all 0.2s;
+  background: var(--bg-2);
+}
+.dropzone:hover, .dropzone.drag-over {
+  border-color: var(--blue); background: var(--blue-soft);
+}
+.dropzone-icon {
+  width: 48px; height: 48px; margin: 0 auto 16px; color: var(--blue);
+}
+.dropzone-text {
+  font-size: 14px; color: var(--text); font-weight: 500; margin-bottom: 4px;
+}
+.dropzone-sub { font-size: 12px; color: var(--text-3); }
+
+.file-info {
+  margin-top: 20px; padding: 12px 16px; background: var(--blue-soft);
+  border-radius: 8px; font-size: 12px; color: var(--blue-deep);
+  display: none;
+}
+.file-info.show { display: block; }
+
+.error-msg {
+  margin-top: 16px; padding: 12px 16px; background: var(--bad-soft);
+  border-radius: 8px; font-size: 12px; color: var(--bad);
+  display: none; text-align: left;
+}
+.error-msg.show { display: block; }
+
+.upload-help {
+  margin-top: 24px; font-size: 11px; color: var(--text-3); line-height: 1.6;
+}
+.upload-help a { color: var(--blue); text-decoration: none; }
+.upload-help a:hover { text-decoration: underline; }
+
+/* ─── 대시보드 화면 ─── */
+.dash {
+  display: none;
+  grid-template-columns: 260px 1fr; grid-template-rows: auto 1fr;
+  gap: 16px; padding: 18px; background: var(--bg); min-height: 100vh; max-width: 1600px; margin: 0 auto;
+}
+.dash.show { display: grid; }
+
+.top-bar {
+  grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 4px 16px; border-bottom: 1px solid var(--border);
+}
+.brand-block { display: flex; align-items: center; gap: 14px; }
+.logo-img { width: 40px; height: 40px; object-fit: contain; }
+.brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+.brand-name {
+  font-family: var(--font-display); font-size: 15px; font-weight: 700;
+  letter-spacing: 0.08em; color: var(--black);
+}
+.brand-sub {
+  font-family: var(--font-display); font-size: 10px; letter-spacing: 0.18em;
+  color: var(--text-3); text-transform: uppercase; margin-top: 3px; font-weight: 500;
+}
+.vertical-rule { width: 1px; height: 28px; background: var(--border); }
+
+.status-pill {
+  display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px;
+  background: var(--blue-soft); border: 1px solid var(--blue-strong);
+  border-radius: 20px; font-family: var(--font-display); font-size: 11px;
+  font-weight: 600; color: var(--blue-deep); letter-spacing: 0.04em; text-transform: uppercase;
+}
+.status-pill::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--blue); animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+.clock-block { text-align: right; }
+.clock {
+  font-family: var(--font-mono); font-size: 26px; font-weight: 500; line-height: 1;
+  color: var(--black); font-variant-numeric: tabular-nums; letter-spacing: 0.02em;
+}
+.date-str {
+  font-family: var(--font-display); font-size: 10px; color: var(--text-3);
+  letter-spacing: 0.12em; margin-top: 5px; text-transform: uppercase; font-weight: 500;
+}
+
+.left-panel { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+.left-panel-title {
+  font-family: var(--font-display); font-size: 10px; font-weight: 600;
+  color: var(--text-3); letter-spacing: 0.16em; text-transform: uppercase; padding: 0 2px;
+}
+.floor-tabs { display: flex; border-bottom: 1px solid var(--border); }
+.floor-tab {
+  flex: 1; padding: 9px 4px; font-family: var(--font-display); font-size: 11px;
+  font-weight: 600; text-align: center; cursor: pointer; color: var(--text-3);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.floor-tab:hover { color: var(--text-2); }
+.floor-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+.line-list {
+  display: flex; flex-direction: column; gap: 6px; overflow-y: auto; flex: 1;
+  max-height: calc(100vh - 240px); padding-right: 2px;
+}
+.line-list::-webkit-scrollbar { width: 4px; }
+.line-list::-webkit-scrollbar-track { background: transparent; }
+.line-list::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 4px; }
+
+.line-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 11px 13px; cursor: pointer; transition: all 0.15s; position: relative;
+}
+.line-card:hover { border-color: var(--border-hi); background: var(--bg-2); }
+.line-card.active { border-color: var(--blue); background: var(--blue-soft); }
+.line-card.active::before {
+  content: ''; position: absolute; left: -1px; top: 12px; bottom: 12px;
+  width: 3px; background: var(--blue); border-radius: 2px;
+}
+.lc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+.lc-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.lc-meta { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); margin-left: 5px; }
+.lc-rate {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+  padding: 2px 7px; border-radius: 3px; font-variant-numeric: tabular-nums;
+}
+.rate-ok { background: var(--ok-soft); color: var(--ok); }
+.rate-warn { background: var(--warn-soft); color: var(--warn); }
+.rate-bad { background: var(--bad-soft); color: var(--bad); }
+.rate-aux { background: var(--bg-3); color: var(--text-3); }
+.lc-bar-bg { height: 3px; background: var(--bg-3); border-radius: 2px; overflow: hidden; }
+.lc-bar-fill { height: 100%; border-radius: 2px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+.main-panel { display: grid; grid-template-rows: auto auto 1fr auto; gap: 14px; min-height: 0; }
+.line-header { display: flex; align-items: flex-end; justify-content: space-between; padding: 0 2px; }
+.line-header-name {
+  font-family: var(--font-display); font-size: 26px; font-weight: 400;
+  color: var(--text); letter-spacing: -0.01em; line-height: 1;
+}
+.line-header-name strong {
+  font-family: var(--font-mono); font-weight: 600; color: var(--blue);
+  margin-right: 12px; font-size: 24px;
+}
+.line-header-meta {
+  font-family: var(--font-display); font-size: 11px; color: var(--text-3);
+  margin-top: 8px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500;
+}
+.line-header-updated {
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-3); letter-spacing: 0.04em;
+}
+
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.kpi {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 16px 18px; position: relative; overflow: hidden; transition: border-color 0.15s;
+}
+.kpi::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--blue);
+}
+.kpi.danger::before { background: var(--bad); }
+.kpi.warn::before { background: var(--warn); }
+.kpi.ok::before { background: var(--ok); }
+.kpi.aux::before { background: var(--text-4); }
+.kpi-label {
+  font-family: var(--font-display); font-size: 10px; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 10px; font-weight: 600;
+}
+.kpi-value {
+  font-family: var(--font-display); font-size: 36px; font-weight: 500;
+  font-variant-numeric: tabular-nums; line-height: 1; color: var(--text); letter-spacing: -0.02em;
+}
+.kpi-sub { font-size: 11px; color: var(--text-3); margin-top: 7px; }
+.kpi-sub .target-num {
+  font-family: var(--font-mono); color: var(--text-2); font-variant-numeric: tabular-nums;
+}
+
+.chart-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px;
+}
+.chart-title {
+  font-family: var(--font-display); font-size: 11px; color: var(--text-3); margin-bottom: 16px;
+  letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.chart-legend {
+  display: flex; gap: 16px; font-family: var(--font-body); font-size: 11px;
+  color: var(--text-3); text-transform: none; letter-spacing: 0; font-weight: 400;
+}
+.chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend-dot { width: 9px; height: 9px; border-radius: 2px; }
+.legend-line { width: 16px; height: 0; border-top: 1.5px dashed var(--text-3); }
+
+.alert-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.alert-pill {
+  display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 6px;
+  font-family: var(--font-display); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.04em; border: 1px solid;
+}
+.alert-pill .alert-icon { font-size: 14px; line-height: 1; }
+.alert-pill.warn { background: var(--warn-soft); color: var(--warn); border-color: #FCD34D; }
+.alert-pill.err { background: var(--bad-soft); color: var(--bad); border-color: #FCA5A5; }
+.alert-pill.ok { background: var(--ok-soft); color: var(--ok); border-color: #86EFAC; }
+.alert-pill.info { background: var(--blue-soft); color: var(--blue-deep); border-color: var(--blue-strong); }
+
+.reload-btn {
+  position: fixed; bottom: 16px; right: 16px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px;
+  font-size: 11px; color: var(--text-2); cursor: pointer; font-family: var(--font-display);
+  font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.reload-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+/* ── QC 연동 스타일 ── */
+.qc-link-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 6px;
+  background: #1a1f2e; color: #90cdf4;
+  border: 1px solid #2b6cb0; font-size: 12px; font-weight: 600;
+  cursor: pointer; text-decoration: none; font-family: var(--font-body);
+  transition: background 0.15s;
+}
+.qc-link-btn:hover { background: #2b6cb0; color: #fff; }
+.live-qc-badge {
+  display: inline-block; margin-left: 6px;
+  font-size: 10px; font-weight: 700; color: #2A8FCB;
+  background: #E8F2FA; border: 1px solid #2A8FCB;
+  padding: 1px 5px; border-radius: 3px; vertical-align: middle;
+}
+#kpiDefect { cursor: pointer; }
+#kpiDefect:hover { background: var(--blue-soft) !important; border-color: var(--blue) !important; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ 업로드 화면 ═══════════════ -->
+<div class="upload-screen" id="uploadScreen">
+  <div class="upload-card">
+    <img class="upload-logo" alt="AJ Solutions" src="data:image/png;base64,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"/>
+    <div class="upload-brand">AJ SOLUTIONS</div>
+    <div class="upload-sub">Production Monitoring</div>
+
+    <div class="dropzone" id="dropzone">
+      <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="17 8 12 3 7 8"/>
+        <line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+      <div class="dropzone-text">Excel 파일을 끌어놓거나 클릭해서 선택</div>
+      <div class="dropzone-sub">AJ_데이터_입력.xlsx</div>
+      <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none">
+    </div>
+
+    <div class="file-info" id="fileInfo"></div>
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="upload-help">
+      처음 사용하신다면 <strong>AJ_데이터_입력.xlsx</strong> 파일을 함께 받으셨을 거예요.<br>
+      파일을 열어 데이터를 입력한 후 여기에 업로드하면 대시보드가 자동으로 표시됩니다.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ 대시보드 ═══════════════ -->
+<div class="dash" id="dashboard">
+  <div class="top-bar">
+    <div class="brand-block">
+      <img class="logo-img" alt="AJ Solutions" src="data:image/png;base64,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"/>
+      <div class="brand-text">
+        <span class="brand-name">AJ SOLUTIONS</span>
+        <span class="brand-sub">Production Monitoring</span>
+      </div>
+      <div class="vertical-rule"></div>
+      <div class="status-pill">
+        <span id="statusText">Loaded</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <a class="qc-link-btn" href="/" id="qcMonitorBtn">
+        ⬡ QC 모니터
+      </a>
+      <div class="clock-block">
+        <div class="clock" id="clk">--:--</div>
+        <div class="date-str" id="dt"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="left-panel">
+    <div class="left-panel-title">생산 라인 · Production Lines</div>
+    <div class="floor-tabs">
+      <div class="floor-tab active" data-floor="all">전체</div>
+      <div class="floor-tab" data-floor="2층">2F</div>
+      <div class="floor-tab" data-floor="1층">1F</div>
+      <div class="floor-tab" data-floor="기타">AUX</div>
+    </div>
+    <div class="line-list" id="lineList"></div>
+  </div>
+
+  <div class="main-panel">
+    <div class="line-header">
+      <div>
+        <div class="line-header-name"><strong id="lhId">—</strong><span id="lhName">—</span></div>
+        <div class="line-header-meta" id="lhMeta">—</div>
+      </div>
+      <div class="line-header-updated" id="lhUpdated">—</div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi" id="kpiActual">
+        <div class="kpi-label">Output · 생산량</div>
+        <div class="kpi-value" id="kActual">—</div>
+        <div class="kpi-sub">목표 <span class="target-num" id="kTarget">—</span></div>
+      </div>
+      <div class="kpi" id="kpiRate">
+        <div class="kpi-label">Achievement · 달성률</div>
+        <div class="kpi-value" id="kRate">—</div>
+        <div class="kpi-sub" id="kRateSub">—</div>
+      </div>
+      <div class="kpi" id="kpiDefect">
+        <div class="kpi-label">Defect Rate · 불량률</div>
+        <div class="kpi-value" id="kDefect">—</div>
+        <div class="kpi-sub" id="kDefectSub">—</div>
+      </div>
+      <div class="kpi" id="kpiWorker">
+        <div class="kpi-label">Workforce · 인원</div>
+        <div class="kpi-value" id="kWorker">—</div>
+        <div class="kpi-sub">명 투입</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">
+        <span>Hourly Output · 시간대별 생산량</span>
+        <div class="chart-legend">
+          <span><span class="legend-dot" style="background:#2A8FCB;"></span>실적</span>
+          <span><span class="legend-line"></span>시간당 목표</span>
+        </div>
+      </div>
+      <div style="position:relative; width:100%; height:220px;">
+        <canvas id="hourChart"></canvas>
+      </div>
+    </div>
+
+    <div class="alert-row" id="alertRow"></div>
+  </div>
+</div>
+
+<button class="reload-btn" id="reloadBtn" style="display:none">다른 파일 불러오기</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ════════════════════════════════════════════════════════════
+//  Excel 파일 → 대시보드 데이터
+// ════════════════════════════════════════════════════════════
+let LINES = [];
+let activeFloor = 'all';
+let activeIdx = 0;
+let chart = null;
+
+const HOURS = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.innerHTML = '<strong>오류:</strong> ' + msg;
+  el.classList.add('show');
+}
+
+function clearError() {
+  document.getElementById('errorMsg').classList.remove('show');
+}
+
+function showFileInfo(filename, lineCount) {
+  const el = document.getElementById('fileInfo');
+  el.textContent = `${filename} · ${lineCount}개 라인 인식`;
+  el.classList.add('show');
+}
+
+// Excel 파일 파싱
+function parseExcel(arrayBuffer) {
+  const wb = XLSX.read(arrayBuffer, { type: 'array' });
+
+  // 시트명 정규화: 한글 시트명 위치 매칭
+  const sheets = {};
+  for (const name of wb.SheetNames) {
+    sheets[name] = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, defval: null });
+  }
+
+  // 01_라인 찾기
+  const linesSheet = findSheet(sheets, ['01_라인', '라인', 'lines', 'Line']);
+  if (!linesSheet) throw new Error('"01_라인" 시트를 찾을 수 없습니다.');
+
+  const lines = parseLinesSheet(linesSheet);
+  if (lines.length === 0) throw new Error('"01_라인" 시트에서 라인 데이터를 읽을 수 없습니다. 컬럼 순서를 확인하세요.');
+
+  // 02_시간대별생산량
+  const hourlySheet = findSheet(sheets, ['02_시간대별생산량', '시간대별', 'hourly', 'production']);
+  const hourlyMap = hourlySheet ? parseHourlySheet(hourlySheet) : {};
+
+  // 03_불량률
+  const defectSheet = findSheet(sheets, ['03_불량률', '불량', 'defect']);
+  const defectMap = defectSheet ? parseDefectSheet(defectSheet) : {};
+
+  // 04_병목공정
+  const bottleneckSheet = findSheet(sheets, ['04_병목공정', '병목', 'bottleneck']);
+  const bottleneckMap = bottleneckSheet ? parseBottleneckSheet(bottleneckSheet) : {};
+
+  // 머지
+  lines.forEach(line => {
+    line.hourly = hourlyMap[line.id] || [];
+    const d = defectMap[line.id];
+    line.defectRate = d ? d.rate : 0;
+    line.defectCount = d ? d.defect : 0;
+    line.actual = line.hourly.reduce((s, h) => s + (h.count || 0), 0);
+    line.bottlenecks = bottleneckMap[line.id] || [];
+  });
+
+  return lines;
+}
+
+function findSheet(sheets, candidates) {
+  for (const c of candidates) {
+    for (const name of Object.keys(sheets)) {
+      if (name.includes(c) || name.toLowerCase().includes(c.toLowerCase())) {
+        return sheets[name];
+      }
+    }
+  }
+  return null;
+}
+
+// 헤더 행 찾기 (line_id 가 포함된 행)
+function findHeaderRow(rows, keyword = 'line_id') {
+  for (let i = 0; i < Math.min(rows.length, 10); i++) {
+    const row = rows[i] || [];
+    if (row.some(c => c && String(c).trim().toLowerCase() === keyword)) return i;
+  }
+  return -1;
+}
+
+function colIndex(headers, name) {
+  return headers.findIndex(h => h && String(h).trim().toLowerCase() === name.toLowerCase());
+}
+
+function parseLinesSheet(rows) {
+  const headerIdx = findHeaderRow(rows, 'line_id');
+  if (headerIdx < 0) return [];
+  const headers = rows[headerIdx];
+  const cId = colIndex(headers, 'line_id');
+  const cName = colIndex(headers, 'line_name');
+  const cFloor = colIndex(headers, 'floor');
+  const cTarget = colIndex(headers, 'daily_target');
+  const cWorkers = colIndex(headers, 'workers');
+  const cHelper = colIndex(headers, 'is_helper');
+
+  const result = [];
+  for (let i = headerIdx + 1; i < rows.length; i++) {
+    const r = rows[i] || [];
+    const id = r[cId];
+    if (!id) continue;
+    result.push({
+      id: String(id).trim(),
+      name: cName >= 0 && r[cName] ? String(r[cName]) : String(id),
+      floor: cFloor >= 0 && r[cFloor] ? String(r[cFloor]) : '',
+      target: cTarget >= 0 ? Number(r[cTarget]) || 0 : 0,
+      workers: cWorkers >= 0 ? Number(r[cWorkers]) || 0 : 0,
+      isHelper: cHelper >= 0 ? toBool(r[cHelper]) : false,
+    });
+  }
+  return result;
+}
+
+function toBool(v) {
+  if (v === true || v === 1) return true;
+  if (typeof v === 'string') {
+    const s = v.trim().toLowerCase();
+    return s === 'true' || s === '예' || s === 'yes' || s === '1';
+  }
+  return false;
+}
+
+function parseHourlySheet(rows) {
+  const headerIdx = findHeaderRow(rows, 'line_id');
+  if (headerIdx < 0) return {};
+  const headers = rows[headerIdx];
+  const cId = colIndex(headers, 'line_id');
+
+  // 시간 컬럼 찾기 (08:00 ~ 17:00)
+  const hourCols = [];
+  headers.forEach((h, i) => {
+    if (h && /^\d{1,2}:?\d{0,2}$/.test(String(h).trim())) {
+      const hh = String(h).includes(':') ? String(h).split(':')[0].padStart(2, '0') + ':00' : String(h).padStart(2, '0') + ':00';
+      hourCols.push({ idx: i, hour: hh });
+    }
+  });
+
+  const map = {};
+  for (let i = headerIdx + 1; i < rows.length; i++) {
+    const r = rows[i] || [];
+    const id = r[cId];
+    if (!id) continue;
+    const lineId = String(id).trim();
+    map[lineId] = hourCols.map(({ idx, hour }) => ({
+      hour: hour.replace(':00', ''),
+      count: r[idx] == null || r[idx] === '' ? null : Number(r[idx]),
+    }));
+  }
+  return map;
+}
+
+function parseDefectSheet(rows) {
+  const headerIdx = findHeaderRow(rows, 'line_id');
+  if (headerIdx < 0) return {};
+  const headers = rows[headerIdx];
+  const cId = colIndex(headers, 'line_id');
+  const cInsp = colIndex(headers, 'inspected_count');
+  const cDef = colIndex(headers, 'defect_count');
+
+  const map = {};
+  for (let i = headerIdx + 1; i < rows.length; i++) {
+    const r = rows[i] || [];
+    const id = r[cId];
+    if (!id) continue;
+    const inspected = Number(r[cInsp]) || 0;
+    const defect = Number(r[cDef]) || 0;
+    map[String(id).trim()] = {
+      inspected, defect,
+      rate: inspected > 0 ? defect / inspected : 0,
+    };
+  }
+  return map;
+}
+
+function parseBottleneckSheet(rows) {
+  const headerIdx = findHeaderRow(rows, 'line_id');
+  if (headerIdx < 0) return {};
+  const headers = rows[headerIdx];
+  const cId = colIndex(headers, 'line_id');
+  const cProc = colIndex(headers, 'process_name');
+  const cPct = colIndex(headers, 'vs_standard_pct');
+
+  const map = {};
+  for (let i = headerIdx + 1; i < rows.length; i++) {
+    const r = rows[i] || [];
+    const id = r[cId];
+    if (!id) continue;
+    const lineId = String(id).trim();
+    const proc = cProc >= 0 ? r[cProc] : null;
+    if (!proc) continue;
+    if (!map[lineId]) map[lineId] = [];
+    map[lineId].push({
+      process: String(proc),
+      pct: cPct >= 0 ? Number(r[cPct]) || 0 : 0,
+    });
+  }
+  return map;
+}
+
+// ════════════════════════════════════════════════════════════
+//  파일 업로드 핸들링
+// ════════════════════════════════════════════════════════════
+async function handleFile(file) {
+  clearError();
+  if (!file) return;
+  if (!/\.xlsx?$/i.test(file.name)) {
+    showError('Excel 파일(.xlsx, .xls)만 지원합니다.');
+    return;
+  }
+  try {
+    const buf = await file.arrayBuffer();
+    const parsed = parseExcel(buf);
+    LINES = parsed;
+    showFileInfo(file.name, parsed.length);
+
+    setTimeout(() => {
+      document.getElementById('uploadScreen').style.display = 'none';
+      document.getElementById('dashboard').classList.add('show');
+      document.getElementById('reloadBtn').style.display = 'block';
+      renderLineList();
+      // 레이아웃이 완전히 잡힌 다음 차트를 그려야 canvas 크기 0 문제를 피할 수 있음
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          renderDetail();
+        });
+      });
+    }, 400);
+  } catch (e) {
+    showError(e.message || '파일 파싱 실패');
+    console.error(e);
+  }
+}
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+dropzone.onclick = () => fileInput.click();
+fileInput.onchange = e => handleFile(e.target.files[0]);
+dropzone.ondragover = e => { e.preventDefault(); dropzone.classList.add('drag-over'); };
+dropzone.ondragleave = () => dropzone.classList.remove('drag-over');
+dropzone.ondrop = e => {
+  e.preventDefault();
+  dropzone.classList.remove('drag-over');
+  handleFile(e.dataTransfer.files[0]);
+};
+document.getElementById('reloadBtn').onclick = () => {
+  document.getElementById('dashboard').classList.remove('show');
+  document.getElementById('uploadScreen').style.display = 'flex';
+  document.getElementById('reloadBtn').style.display = 'none';
+  document.getElementById('fileInfo').classList.remove('show');
+  clearError();
+  fileInput.value = '';
+};
+
+// ════════════════════════════════════════════════════════════
+//  렌더링
+// ════════════════════════════════════════════════════════════
+function filtered() {
+  return activeFloor === 'all' ? LINES : LINES.filter(l => l.floor === activeFloor);
+}
+function rateClass(r) { return r >= 0.85 ? 'rate-ok' : r >= 0.6 ? 'rate-warn' : 'rate-bad'; }
+function rateColor(r) { return r >= 0.85 ? '#16A34A' : r >= 0.6 ? '#D97706' : '#DC2626'; }
+function kpiClass(r) { return r >= 0.85 ? 'ok' : r >= 0.6 ? 'warn' : 'danger'; }
+
+function renderLineList() {
+  const el = document.getElementById('lineList');
+  const list = filtered();
+  el.innerHTML = '';
+  list.forEach((l, i) => {
+    const r = l.target > 0 ? l.actual / l.target : 0;
+    const div = document.createElement('div');
+    div.className = 'line-card' + (i === activeIdx ? ' active' : '');
+    div.innerHTML = `
+      <div class="lc-header">
+        <span class="lc-name">${l.name}<span class="lc-meta">${l.workers}명</span></span>
+        ${l.isHelper ? '<span class="lc-rate rate-aux">AUX</span>' : `<span class="lc-rate ${rateClass(r)}">${Math.round(r*100)}%</span>`}
+      </div>
+      ${l.isHelper ? '' : `<div class="lc-bar-bg"><div class="lc-bar-fill" style="width:${Math.min(r*100,100).toFixed(1)}%; background:${rateColor(r)};"></div></div>`}
+    `;
+    div.onclick = () => { activeIdx = i; renderLineList(); renderDetail(); };
+    el.appendChild(div);
+  });
+}
+
+function renderDetail() {
+  const list = filtered();
+  const l = list[activeIdx];
+  if (!l) return;
+
+  document.getElementById('lhId').textContent = l.id;
+  document.getElementById('lhName').textContent = l.name;
+  document.getElementById('lhMeta').textContent = `${l.floor} · ${l.isHelper ? 'Auxiliary' : 'Sewing Line'}`;
+  const n = new Date();
+  document.getElementById('lhUpdated').textContent = `Updated ${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
+
+  ['kpiActual','kpiRate','kpiDefect','kpiWorker'].forEach(id => {
+    document.getElementById(id).classList.remove('ok','warn','danger','aux');
+  });
+
+  if (l.isHelper) {
+    document.getElementById('kpiActual').classList.add('aux');
+    document.getElementById('kpiRate').classList.add('aux');
+    document.getElementById('kpiDefect').classList.add('aux');
+    document.getElementById('kActual').textContent = '—';
+    document.getElementById('kTarget').textContent = '—';
+    document.getElementById('kRate').textContent = '—';
+    document.getElementById('kRate').style.color = '#8A93A0';
+    document.getElementById('kRateSub').textContent = '보조 라인';
+    document.getElementById('kDefect').textContent = '—';
+    document.getElementById('kDefect').style.color = '#14181F';
+    document.getElementById('kDefectSub').textContent = '—';
+    document.getElementById('kWorker').textContent = l.workers;
+    renderChart(l);
+    renderAlerts(l, 0);
+    return;
+  }
+
+  const r = l.target > 0 ? l.actual / l.target : 0;
+  document.getElementById('kActual').textContent = l.actual.toLocaleString();
+  document.getElementById('kTarget').textContent = l.target.toLocaleString();
+  const rateEl = document.getElementById('kRate');
+  rateEl.textContent = Math.round(r * 100) + '%';
+  rateEl.style.color = rateColor(r);
+  document.getElementById('kRateSub').textContent =
+    r >= 0.85 ? '목표 달성 중' : r >= 0.6 ? '미달 주의' : '지연 위험';
+  document.getElementById('kpiRate').classList.add(kpiClass(r));
+
+  // ── QC Monitor live data 오버레이 ──
+  const liveQC = getLiveQCData();
+  const qcId = normalizeToQCLineId(l.id);
+  const qcRow = liveQC[qcId];
+
+  const dEl = document.getElementById('kDefect');
+  const subEl = document.getElementById('kDefectSub');
+
+  if (qcRow && qcRow.inspection_qty > 0) {
+    const liveRate = qcRow.defect_rate;
+    dEl.textContent = (liveRate * 100).toFixed(1) + '%';
+    const liveBad = liveRate > 0.05;
+    dEl.style.color = liveBad ? '#DC2626' : '#16A34A';
+    subEl.innerHTML = `${qcRow.defect_count}건 발생 <span class="live-qc-badge">● LIVE QC</span>`;
+    if (liveBad) document.getElementById('kpiDefect').classList.add('danger');
+  } else {
+    dEl.textContent = (l.defectRate * 100).toFixed(1) + '%';
+    const defectBad = l.defectRate > 0.05;
+    dEl.style.color = defectBad ? '#DC2626' : '#16A34A';
+    subEl.textContent = `${l.defectCount}건 발생`;
+    if (defectBad) document.getElementById('kpiDefect').classList.add('danger');
+  }
+
+  // kpiDefect 클릭 → QC 모니터 해당 라인으로
+  document.getElementById('kpiDefect').onclick = () => {
+    window.location.href = `/?line=${qcId}`;
+  };
+  document.getElementById('kpiDefect').title = `${qcId} QC 모니터 열기`;
+
+  document.getElementById('kWorker').textContent = l.workers;
+  renderChart(l);
+  renderAlerts(l, r);
+}
+
+function renderChart(l) {
+  const canvas = document.getElementById('hourChart');
+  if (!canvas) return;
+
+  // canvas 부모가 화면에 안 그려진 상태면 다음 프레임으로 미룸
+  const parent = canvas.parentElement;
+  if (parent.offsetWidth === 0 || parent.offsetHeight === 0) {
+    requestAnimationFrame(() => renderChart(l));
+    return;
+  }
+
+  const labels = l.hourly.map(h => h.hour);
+  const data = l.hourly.map(h => h.count);
+  const hTarget = l.target > 0 ? l.target / 9 : 0;
+
+  const colors = data.map((c, i) => {
+    if (c === null) return '#EFF1F4';
+    if (labels[i] === '12') return '#CDD2DA';
+    if (hTarget === 0) return '#2A8FCB';
+    const rr = c / hTarget;
+    return rr >= 0.85 ? '#2A8FCB' : rr >= 0.6 ? '#D97706' : '#DC2626';
+  });
+
+  const datasets = [{
+    label: '실적', data: data.map(d => d === null ? 0 : d),
+    backgroundColor: colors, borderRadius: 3, borderSkipped: false,
+  }];
+
+  if (hTarget > 0) {
+    datasets.push({
+      label: '목표', type: 'line',
+      data: labels.map((lab, i) => lab === '12' ? null : (l.hourly[i].count === null ? null : hTarget)),
+      borderColor: '#8A93A0', borderDash: [4, 4], borderWidth: 1.5,
+      pointRadius: 0, fill: false, tension: 0, spanGaps: false,
+    });
+  }
+
+  if (chart) {
+    chart.destroy();
+    chart = null;
+  }
+  chart = new Chart(canvas, {
+    type: 'bar',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#FFFFFF', borderColor: '#E4E7EC', borderWidth: 1,
+          titleColor: '#14181F', bodyColor: '#4A5260', padding: 12,
+          titleFont: { family: "'IBM Plex Sans KR', sans-serif", weight: '500' },
+          bodyFont: { family: "'IBM Plex Sans KR', sans-serif" },
+          callbacks: {
+            title: ctx => `${ctx[0].label}:00`,
+            label: ctx => ctx.datasetIndex === 0 ? ` 실적 ${ctx.parsed.y}개` : ` 목표 ${Math.round(ctx.parsed.y)}개`,
+          },
+        },
+      },
+      scales: {
+        x: {
+          ticks: { font: { size: 11, family: "'JetBrains Mono', monospace" }, color: '#8A93A0', autoSkip: false },
+          grid: { display: false }, border: { color: '#E4E7EC' },
+        },
+        y: {
+          ticks: { font: { size: 11, family: "'JetBrains Mono', monospace" }, color: '#8A93A0' },
+          grid: { color: '#F0F1F4' }, border: { display: false }, min: 0,
+        },
+      },
+    },
+  });
+}
+
+function renderAlerts(l, r) {
+  const row = document.getElementById('alertRow');
+  row.innerHTML = '';
+  const add = (cls, icon, text) => {
+    const p = document.createElement('div');
+    p.className = 'alert-pill ' + cls;
+    p.innerHTML = `<span class="alert-icon">${icon}</span> ${text}`;
+    row.appendChild(p);
+  };
+  (l.bottlenecks || []).forEach(b => {
+    add('warn', '⚠', `BOTTLENECK · ${b.process} +${Math.round(b.pct)}%`);
+  });
+  if (!l.isHelper && l.defectRate > 0.05) add('err', '✕', `DEFECT THRESHOLD · ${(l.defectRate*100).toFixed(1)}%`);
+  if (!l.isHelper && r < 0.6) add('err', '↓', `PRODUCTION DELAY · 관리자 확인 필요`);
+  if (row.children.length === 0) add('info', '✓', l.isHelper ? 'AUX OPERATIONAL · 보조 라인 운영 중' : 'OPERATING NORMALLY · 정상 운영 중');
+}
+
+function updateClock() {
+  const n = new Date();
+  document.getElementById('clk').textContent =
+    String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+  const MM = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  document.getElementById('dt').textContent =
+    `${String(n.getDate()).padStart(2,'0')} ${MM[n.getMonth()]} ${n.getFullYear()}`;
+}
+
+document.querySelectorAll('.floor-tab').forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll('.floor-tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    activeFloor = t.dataset.floor;
+    activeIdx = 0;
+    renderLineList();
+    renderDetail();
+  };
+});
+
+updateClock();
+setInterval(updateClock, 10000);
+
+// ── QC Monitor localStorage 연동 ──
+function normalizeToQCLineId(lineId) {
+  if (!lineId) return '';
+  // L3-1 → L3, L3-A → L3, L3-1-2 → L3
+  const base = String(lineId).toUpperCase().split('-')[0];
+  return base;
+}
+
+function getLiveQCData() {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const raw = localStorage.getItem('qc_events_' + today);
+    if (!raw) return {};
+    const events = JSON.parse(raw);
+    const byLine = {};
+    for (const e of events) {
+      const lid = (e.line || '').toUpperCase();
+      if (!lid) continue;
+      if (!byLine[lid]) byLine[lid] = { defect_count: 0, inspection_qty: 0 };
+      byLine[lid].defect_count += Number(e.defect_count || 0);
+      byLine[lid].inspection_qty += Number(e.inspection_qty || 0);
+    }
+    for (const lid of Object.keys(byLine)) {
+      const r = byLine[lid];
+      r.defect_rate = r.inspection_qty > 0 ? r.defect_count / r.inspection_qty : 0;
+    }
+    return byLine;
+  } catch (_) { return {}; }
+}
+
+// QC 데이터 15초마다 자동 갱신
+setInterval(() => {
+  const list = filtered();
+  if (list.length > 0) renderDetail();
+}, 15000);
+</script>
+</body>
+</html>

@@ -16,6 +16,7 @@ import {
   filterLinesByFloor,
   getCoverageStats,
   FLOOR2_LINES,
+  SEWING_LINES,
   normalizeLineGroup,
 } from './data/lineMaster';
 import { buildLiveAlerts } from './data/alertUtils';
@@ -49,7 +50,17 @@ export default function App() {
   const [dashboardData, setDashboardData] = useState(null);
   const [thresholds, setThresholds] = useState(() => loadThresholds());
   const [selectedLine, setSelectedLine] = useState(null);
+  const [fromDashboard, setFromDashboard] = useState(false);
   const now = useTime();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const lineParam = (params.get('line') || '').toUpperCase();
+    if (lineParam && SEWING_LINES.includes(lineParam)) {
+      setSelectedLine(lineParam);
+      setFromDashboard(true);
+    }
+  }, []);
 
   const demoLoading = isDemoMode && !dashboardData;
 
@@ -154,7 +165,14 @@ export default function App() {
         onDeleteEvent={handleDeleteEvent}
         catalog={catalogData}
         lineAlerts={lineAlerts}
-        onBack={() => setSelectedLine(null)}
+        fromDashboard={fromDashboard}
+        onBack={() => {
+          if (fromDashboard) {
+            window.location.href = '/dashboard.html';
+          } else {
+            setSelectedLine(null);
+          }
+        }}
         now={now}
       />
     );
