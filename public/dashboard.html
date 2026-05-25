@@ -11,43 +11,46 @@
 
 <style>
 :root {
-  --bg: #FFFFFF;
-  --bg-2: #F7F8FA;
-  --bg-3: #EFF1F4;
-  --surface: #FFFFFF;
-  --border: #E4E7EC;
-  --border-hi: #CDD2DA;
-  --blue: #2A8FCB;
-  --blue-deep: #1E6FA0;
-  --blue-soft: #E8F2FA;
-  --blue-strong: #D1E5F4;
-  --black: #0E1116;
-  --text: #14181F;
-  --text-2: #4A5260;
-  --text-3: #8A93A0;
-  --text-4: #B8BEC8;
-  --ok: #16A34A;
-  --warn: #D97706;
-  --bad: #DC2626;
-  --ok-soft: #DCFCE7;
-  --warn-soft: #FEF3C7;
-  --bad-soft: #FEE2E2;
-  --font-display: 'Archivo', sans-serif;
-  --font-body: 'IBM Plex Sans KR', -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --bg:          #070B12;
+  --bg-2:        #0B1020;
+  --bg-3:        #101828;
+  --surface:     #0E1520;
+  --border:      #182035;
+  --border-hi:   #243050;
+  --blue:        #1A90C8;
+  --blue-deep:   #1270A8;
+  --blue-soft:   #091828;
+  --blue-strong: #102235;
+  --black:       #E0EAF8;
+  --text:        #BED0EA;
+  --text-2:      #6A8AAE;
+  --text-3:      #3E5878;
+  --text-4:      #243050;
+  --ok:          #16A070;
+  --warn:        #D98010;
+  --bad:         #D83A3A;
+  --ok-soft:     #081A12;
+  --warn-soft:   #1A1004;
+  --bad-soft:    #1A0808;
+  --ok-border:   #1A5E38;
+  --warn-border: #7A4C00;
+  --bad-border:  #7A2020;
+  --font-display: 'IBM Plex Sans KR', -apple-system, sans-serif;
+  --font-body:    'IBM Plex Sans KR', -apple-system, sans-serif;
+  --font-mono:    'IBM Plex Mono', 'JetBrains Mono', monospace;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { background: var(--bg-2); font-family: var(--font-body); color: var(--text); min-height: 100vh; }
+html, body { background: var(--bg); font-family: var(--font-body); color: var(--text); min-height: 100vh; }
 
 /* ─── 파일 업로드 화면 ─── */
 .upload-screen {
   min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
 }
 .upload-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+  background: var(--surface); border: 1px solid var(--border-hi); border-radius: 4px;
   padding: 48px 56px; max-width: 560px; width: 100%; text-align: center;
-  box-shadow: 0 8px 32px rgba(14,17,22,0.04);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 .upload-logo { width: 64px; height: 64px; margin: 0 auto 20px; object-fit: contain; }
 .upload-brand {
@@ -60,9 +63,9 @@ html, body { background: var(--bg-2); font-family: var(--font-body); color: var(
 }
 
 .dropzone {
-  border: 2px dashed var(--border-hi); border-radius: 12px;
+  border: 2px dashed var(--border-hi); border-radius: 3px;
   padding: 40px 24px; cursor: pointer; transition: all 0.2s;
-  background: var(--bg-2);
+  background: var(--bg-3);
 }
 .dropzone:hover, .dropzone.drag-over {
   border-color: var(--blue); background: var(--blue-soft);
@@ -99,7 +102,7 @@ html, body { background: var(--bg-2); font-family: var(--font-body); color: var(
 .dash {
   display: none;
   grid-template-columns: 260px 1fr; grid-template-rows: auto 1fr;
-  gap: 16px; padding: 18px; background: var(--bg); min-height: 100vh; max-width: 1600px; margin: 0 auto;
+  gap: 14px; padding: 16px; background: var(--bg-2); min-height: 100vh; max-width: 1600px; margin: 0 auto;
 }
 .dash.show { display: grid; }
 
@@ -121,10 +124,10 @@ html, body { background: var(--bg-2); font-family: var(--font-body); color: var(
 .vertical-rule { width: 1px; height: 28px; background: var(--border); }
 
 .status-pill {
-  display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px;
+  display: inline-flex; align-items: center; gap: 7px; padding: 4px 10px;
   background: var(--blue-soft); border: 1px solid var(--blue-strong);
-  border-radius: 20px; font-family: var(--font-display); font-size: 11px;
-  font-weight: 600; color: var(--blue-deep); letter-spacing: 0.04em; text-transform: uppercase;
+  border-radius: 2px; font-family: var(--font-display); font-size: 10px;
+  font-weight: 600; color: var(--blue); letter-spacing: 0.08em; text-transform: uppercase;
 }
 .status-pill::before {
   content: ''; width: 6px; height: 6px; border-radius: 50%;
@@ -167,8 +170,8 @@ html, body { background: var(--bg-2); font-family: var(--font-body); color: var(
 .line-list::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 4px; }
 
 .line-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
-  padding: 11px 13px; cursor: pointer; transition: all 0.15s; position: relative;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 2px;
+  padding: 10px 12px; cursor: pointer; transition: all 0.15s; position: relative;
 }
 .line-card:hover { border-color: var(--border-hi); background: var(--bg-2); }
 .line-card.active { border-color: var(--blue); background: var(--blue-soft); }
@@ -210,11 +213,11 @@ html, body { background: var(--bg-2); font-family: var(--font-body); color: var(
 
 .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .kpi {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
-  padding: 16px 18px; position: relative; overflow: hidden; transition: border-color 0.15s;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 2px;
+  padding: 14px 16px; position: relative; overflow: hidden; transition: border-color 0.15s;
 }
 .kpi::before {
-  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--blue);
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--border-hi);
 }
 .kpi.danger::before { background: var(--bad); }
 .kpi.warn::before { background: var(--warn); }
@@ -234,7 +237,7 @@ html, body { background: var(--bg-2); font-family: var(--font-body); color: var(
 }
 
 .chart-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 2px; padding: 16px 18px;
 }
 .chart-title {
   font-family: var(--font-display); font-size: 11px; color: var(--text-3); margin-bottom: 16px;
@@ -251,40 +254,41 @@ html, body { background: var(--bg-2); font-family: var(--font-body); color: var(
 
 .alert-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .alert-pill {
-  display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 6px;
+  display: flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 2px;
   font-family: var(--font-display); font-size: 11px; font-weight: 600;
-  letter-spacing: 0.04em; border: 1px solid;
+  letter-spacing: 0.06em; border: 1px solid; text-transform: uppercase;
 }
 .alert-pill .alert-icon { font-size: 14px; line-height: 1; }
-.alert-pill.warn { background: var(--warn-soft); color: var(--warn); border-color: #FCD34D; }
-.alert-pill.err { background: var(--bad-soft); color: var(--bad); border-color: #FCA5A5; }
-.alert-pill.ok { background: var(--ok-soft); color: var(--ok); border-color: #86EFAC; }
-.alert-pill.info { background: var(--blue-soft); color: var(--blue-deep); border-color: var(--blue-strong); }
+.alert-pill.warn { background: var(--warn-soft); color: var(--warn); border-color: var(--warn-border); }
+.alert-pill.err { background: var(--bad-soft); color: var(--bad); border-color: var(--bad-border); }
+.alert-pill.ok { background: var(--ok-soft); color: var(--ok); border-color: var(--ok-border); }
+.alert-pill.info { background: var(--blue-soft); color: var(--blue); border-color: var(--blue-strong); }
 
 .reload-btn {
   position: fixed; bottom: 16px; right: 16px; background: var(--surface);
-  border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px;
-  font-size: 11px; color: var(--text-2); cursor: pointer; font-family: var(--font-display);
-  font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; z-index: 100;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border: 1px solid var(--border-hi); border-radius: 2px; padding: 8px 14px;
+  font-size: 10px; color: var(--text-2); cursor: pointer; font-family: var(--font-display);
+  font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 .reload-btn:hover { border-color: var(--blue); color: var(--blue); }
 
 /* ── QC 연동 스타일 ── */
 .qc-link-btn {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 14px; border-radius: 6px;
-  background: #1a1f2e; color: #90cdf4;
-  border: 1px solid #2b6cb0; font-size: 12px; font-weight: 600;
-  cursor: pointer; text-decoration: none; font-family: var(--font-body);
-  transition: background 0.15s;
+  padding: 5px 12px; border-radius: 2px;
+  background: transparent; color: var(--blue);
+  border: 1px solid var(--blue-strong); font-size: 11px; font-weight: 600;
+  cursor: pointer; text-decoration: none; font-family: var(--font-display);
+  transition: all 0.15s; text-transform: uppercase; letter-spacing: 0.06em;
 }
-.qc-link-btn:hover { background: #2b6cb0; color: #fff; }
+.qc-link-btn:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
 .live-qc-badge {
   display: inline-block; margin-left: 6px;
-  font-size: 10px; font-weight: 700; color: #2A8FCB;
-  background: #E8F2FA; border: 1px solid #2A8FCB;
-  padding: 1px 5px; border-radius: 3px; vertical-align: middle;
+  font-size: 10px; font-weight: 700; color: var(--ok);
+  background: var(--ok-soft); border: 1px solid var(--ok-border);
+  padding: 1px 5px; border-radius: 2px; vertical-align: middle;
+  text-transform: uppercase; letter-spacing: 0.06em;
 }
 #kpiDefect { cursor: pointer; }
 #kpiDefect:hover { background: var(--blue-soft) !important; border-color: var(--blue) !important; }
@@ -392,7 +396,7 @@ html, body { background: var(--bg-2); font-family: var(--font-body); color: var(
       <div class="chart-title">
         <span>Hourly Output · 시간대별 생산량</span>
         <div class="chart-legend">
-          <span><span class="legend-dot" style="background:#2A8FCB;"></span>실적</span>
+          <span><span class="legend-dot" style="background:#1A90C8;"></span>실적</span>
           <span><span class="legend-line"></span>시간당 목표</span>
         </div>
       </div>

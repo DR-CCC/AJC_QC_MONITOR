@@ -260,7 +260,7 @@ export default function App() {
           {sideTab === TAB_DASHBOARD && (
             <>
               {extraEvents.length > 0 && (
-                <div style={{ padding: '7px 14px', borderBottom: '1px solid #E4E7EC', fontSize: 11, color: '#16A34A' }}>
+                <div style={{ padding: '7px 14px', borderBottom: '1px solid var(--border)', fontSize: 11, color: 'var(--ok)', fontFamily: 'var(--font-mono)' }}>
                   오늘 {extraEvents.length}건 입력됨
                 </div>
               )}
