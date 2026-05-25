@@ -44,6 +44,12 @@ export default function LineQCPage({
     return !s.product_code;
   });
   const [sessionDraft, setSessionDraft] = useState(() => loadLineSession(line));
+
+  const [editingProcessWorkers, setEditingProcessWorkers] = useState(false);
+  const [processWorkersDraft, setProcessWorkersDraft] = useState(
+    () => ({ ...loadLineSession(line).processWorkers }),
+  );
+
   const [form, setForm] = useState(EMPTY_FORM);
   const [editingEvent, setEditingEvent] = useState(null);
   const [showDefList, setShowDefList] = useState(false);
@@ -71,7 +77,6 @@ export default function LineQCPage({
     return null;
   }, [form.defCodeNum, resolvedDef]);
 
-  // 카테고리별로 그룹핑된 catalog
   const catalogByCategory = useMemo(() => {
     const groups = {};
     for (const c of catalog) {
@@ -81,6 +86,17 @@ export default function LineQCPage({
     }
     return groups;
   }, [catalog]);
+
+  // 현재 공정의 담당 작업자 (공정별 배정 우선, 없으면 세션 기본값)
+  const currentProcessWorker = session.processWorkers?.[form.process] || session.worker_id || '';
+
+  // 배정된 공정 목록 (뷰 모드용)
+  const assignedEntries = useMemo(
+    () => PROCESSES
+      .map(p => [p, session.processWorkers?.[p] || ''])
+      .filter(([, w]) => w),
+    [session.processWorkers],
+  );
 
   const criticalCount = lineAlerts.filter(a => a.severity === 'critical').length;
   const warnCount = lineAlerts.filter(a => a.severity === 'warning').length;
@@ -95,9 +111,26 @@ export default function LineQCPage({
   }
 
   function saveSession() {
-    setSession({ ...sessionDraft });
-    saveLineSession(line, sessionDraft);
+    const updated = { ...sessionDraft, processWorkers: session.processWorkers || {} };
+    setSession(updated);
+    saveLineSession(line, updated);
     setEditingSession(false);
+  }
+
+  function openProcessWorkersEdit() {
+    setProcessWorkersDraft({ ...(session.processWorkers || {}) });
+    setEditingProcessWorkers(true);
+    setEditingSession(false);
+  }
+
+  function saveProcessWorkers() {
+    const cleaned = Object.fromEntries(
+      Object.entries(processWorkersDraft).filter(([, v]) => v.trim()),
+    );
+    const updated = { ...session, processWorkers: cleaned };
+    setSession(updated);
+    saveLineSession(line, updated);
+    setEditingProcessWorkers(false);
   }
 
   function selectDefCode(code) {
@@ -109,6 +142,7 @@ export default function LineQCPage({
     setEditingEvent(evt);
     setForm(formFromEvent(evt));
     setEditingSession(false);
+    setEditingProcessWorkers(false);
     setShowDefList(false);
   }
 
@@ -120,6 +154,8 @@ export default function LineQCPage({
   function handleSubmit(e) {
     e.preventDefault();
     if (!resolvedDef || defError || !form.defect_count) return;
+
+    const processWorker = session.processWorkers?.[form.process] || session.worker_id;
 
     if (editingEvent) {
       onUpdateEvent?.({
@@ -139,14 +175,13 @@ export default function LineQCPage({
         created_at: new Date().toISOString(),
         line,
         process: form.process,
-        worker_id: session.worker_id,
+        worker_id: processWorker,
         product_code: session.product_code,
         item_name: session.item_name,
         defect_code: resolvedDef.code,
         defect_count: Number(form.defect_count),
         inspection_qty: Number(form.inspection_qty) || 0,
       });
-      // 입력 후: 불량수·검사수량 초기화, 공정·코드번호는 유지
       setForm(prev => ({ ...prev, defect_count: '', inspection_qty: '' }));
       setToast(`✓ ${resolvedDef.code} × ${form.defect_count}`);
     }
@@ -181,7 +216,7 @@ export default function LineQCPage({
 
       <div className="lqc-body">
 
-        {/* Session info (product / item / worker only) */}
+        {/* Session info */}
         <div className="lqc-session-card">
           <div className="lqc-session-hdr">
             <span className="lqc-section-label">세션 정보</span>
@@ -200,7 +235,7 @@ export default function LineQCPage({
                 {session.item_name || <span className="chip-empty">미설정</span>}
               </span>
               <span className="lqc-chip">
-                <span className="chip-lbl">작업자</span>
+                <span className="chip-lbl">기본 작업자</span>
                 {session.worker_id || <span className="chip-empty">미설정</span>}
               </span>
             </div>
@@ -217,13 +252,59 @@ export default function LineQCPage({
                   onChange={e => setSessionDraft(p => ({ ...p, item_name: e.target.value }))} />
               </div>
               <div className="lqc-srow">
-                <label>작업자 ID</label>
+                <label>기본 작업자 ID</label>
                 <input type="text" placeholder="W-1024" value={sessionDraft.worker_id}
                   onChange={e => setSessionDraft(p => ({ ...p, worker_id: e.target.value }))} />
               </div>
               <div className="lqc-session-actions">
                 <button className="lqc-session-cancel" type="button" onClick={() => setEditingSession(false)}>취소</button>
                 <button className="lqc-session-save" type="button" onClick={saveSession}>저장</button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* 공정별 작업자 배정 */}
+        <div className="lqc-session-card lqc-pw-card">
+          <div className="lqc-session-hdr">
+            <span className="lqc-section-label">공정별 작업자 배정</span>
+            {!editingProcessWorkers && (
+              <button className="lqc-session-edit-btn" onClick={openProcessWorkersEdit}>편집</button>
+            )}
+          </div>
+
+          {!editingProcessWorkers ? (
+            assignedEntries.length === 0 ? (
+              <div className="lqc-pw-empty">배정된 작업자 없음 — 편집으로 공정별 작업자를 입력하세요</div>
+            ) : (
+              <div className="lqc-pw-chips">
+                {assignedEntries.map(([proc, worker]) => (
+                  <span key={proc} className="lqc-pw-chip">
+                    <span className="lqc-pw-proc">{proc}</span>
+                    <span className="lqc-pw-worker">{worker}</span>
+                  </span>
+                ))}
+              </div>
+            )
+          ) : (
+            <div>
+              <div className="lqc-pw-grid">
+                {PROCESSES.map(proc => (
+                  <div key={proc} className="lqc-pw-row">
+                    <label className="lqc-pw-label">{proc}</label>
+                    <input
+                      className="lqc-pw-input"
+                      type="text"
+                      placeholder="W-..."
+                      value={processWorkersDraft[proc] || ''}
+                      onChange={e => setProcessWorkersDraft(prev => ({ ...prev, [proc]: e.target.value }))}
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="lqc-session-actions" style={{ marginTop: 12 }}>
+                <button className="lqc-session-cancel" type="button" onClick={() => setEditingProcessWorkers(false)}>취소</button>
+                <button className="lqc-session-save" type="button" onClick={saveProcessWorkers}>저장</button>
               </div>
             </div>
           )}
@@ -259,12 +340,20 @@ export default function LineQCPage({
 
           <form className="lqc-quick-form" onSubmit={handleSubmit} autoComplete="off">
 
-            {/* 공정 */}
+            {/* 공정 + 담당 작업자 힌트 */}
             <div className="lqc-qfield">
               <label>공정</label>
               <select value={form.process} onChange={e => setF('process', e.target.value)}>
                 {PROCESSES.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
+              <span className="lqc-process-worker-hint">
+                담당: <strong>{currentProcessWorker || '—'}</strong>
+                {session.processWorkers?.[form.process]
+                  ? null
+                  : currentProcessWorker
+                    ? <span className="lqc-pw-fallback"> (기본값)</span>
+                    : null}
+              </span>
             </div>
 
             {/* 불량코드 번호 + 목록 */}
@@ -409,6 +498,9 @@ export default function LineQCPage({
                   <span className="lqc-log-count">× {e.defect_count}</span>
                   {Number(e.inspection_qty) > 0 && (
                     <span className="lqc-log-qty">/{Number(e.inspection_qty).toLocaleString()}</span>
+                  )}
+                  {e.worker_id && (
+                    <span className="lqc-log-worker">{e.worker_id}</span>
                   )}
                   <button className="lqc-log-edit" type="button" onClick={() => startEdit(e)}>수정</button>
                   <button className="lqc-log-del" type="button" onClick={() => onDeleteEvent(e.event_id)}>삭제</button>

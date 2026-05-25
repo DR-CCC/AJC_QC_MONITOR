@@ -1127,6 +1127,94 @@ body {
 }
 .lqc-session-save:hover { background: var(--blue-deep); }
 
+/* 공정별 작업자 카드 */
+.lqc-pw-card { border-top: none; }
+.lqc-pw-empty {
+  font-size: 11px;
+  color: var(--text-4);
+  font-style: italic;
+  padding: 2px 0;
+}
+.lqc-pw-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.lqc-pw-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.lqc-pw-proc {
+  background: var(--bg-3);
+  color: var(--text-3);
+  padding: 4px 8px;
+  font-size: 10px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-right: 1px solid var(--border);
+}
+.lqc-pw-worker {
+  background: var(--surface);
+  color: var(--text);
+  padding: 4px 10px;
+  font-weight: 500;
+}
+.lqc-pw-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px 14px;
+}
+.lqc-pw-row { display: flex; align-items: center; gap: 8px; }
+.lqc-pw-label {
+  font-size: 10px;
+  font-family: var(--font-display);
+  color: var(--text-3);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  width: 48px;
+  flex-shrink: 0;
+}
+.lqc-pw-input {
+  flex: 1;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  padding: 5px 8px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text);
+  min-width: 0;
+}
+.lqc-pw-input:focus { outline: none; border-color: var(--blue); background: var(--surface); }
+
+/* 공정 담당자 힌트 (입력폼) */
+.lqc-process-worker-hint {
+  font-size: 11px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  margin-top: 2px;
+}
+.lqc-process-worker-hint strong { color: var(--blue); font-weight: 600; }
+.lqc-pw-fallback { color: var(--text-4); font-size: 10px; }
+
+/* 입력 내역 작업자 표시 */
+.lqc-log-worker {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-3);
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  padding: 1px 6px;
+  border-radius: 0;
+  flex-shrink: 0;
+}
+
 /* Alerts section */
 .lqc-alerts-section {
   background: var(--bg-2);

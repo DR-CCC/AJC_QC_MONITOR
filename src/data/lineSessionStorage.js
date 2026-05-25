@@ -4,6 +4,7 @@ export const EMPTY_SESSION = {
   product_code: '',
   item_name: '',
   worker_id: '',
+  processWorkers: {},
 };
 
 export function loadLineSession(line) {
