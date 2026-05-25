@@ -631,6 +631,10 @@ async function handleFile(file) {
     const parsed = parseExcel(buf);
     LINES = parsed;
     showFileInfo(file.name, parsed.length);
+    // 엑셀 데이터 캐시 (QC 모니터 이동 후 복귀 시 자동 복원)
+    try {
+      localStorage.setItem('aj_lines_cache', JSON.stringify({ lines: LINES, ts: Date.now(), name: file.name }));
+    } catch (_) {}
 
     setTimeout(() => {
       document.getElementById('uploadScreen').style.display = 'none';
@@ -662,6 +666,7 @@ dropzone.ondrop = e => {
   handleFile(e.dataTransfer.files[0]);
 };
 document.getElementById('reloadBtn').onclick = () => {
+  localStorage.removeItem('aj_lines_cache');
   document.getElementById('dashboard').classList.remove('show');
   document.getElementById('uploadScreen').style.display = 'flex';
   document.getElementById('reloadBtn').style.display = 'none';
@@ -889,6 +894,23 @@ document.querySelectorAll('.floor-tab').forEach(t => {
 
 updateClock();
 setInterval(updateClock, 10000);
+
+// ── 엑셀 캐시 자동 복원 (QC 모니터에서 돌아왔을 때) ──
+(function tryRestoreCache() {
+  try {
+    const cached = JSON.parse(localStorage.getItem('aj_lines_cache') || 'null');
+    if (!cached || !Array.isArray(cached.lines) || cached.lines.length === 0) return;
+    // 8시간(1교대) 이내 데이터만 복원
+    if (Date.now() - (cached.ts || 0) > 8 * 3600 * 1000) return;
+    LINES = cached.lines;
+    if (cached.name) showFileInfo(cached.name + ' (캐시)', LINES.length);
+    document.getElementById('uploadScreen').style.display = 'none';
+    document.getElementById('dashboard').classList.add('show');
+    document.getElementById('reloadBtn').style.display = 'block';
+    renderLineList();
+    requestAnimationFrame(() => requestAnimationFrame(() => renderDetail()));
+  } catch (_) {}
+})();
 
 // ── QC Monitor localStorage 연동 ──
 function normalizeToQCLineId(lineId) {
