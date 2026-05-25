@@ -182,6 +182,7 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <a href="/dashboard.html" className="back-to-dashboard-btn">← 생산 대시보드</a>
           <div className="live-dot" />
           <h1>AJS QC Monitor</h1>
           <span className={`badge${isDemoMode ? ' badge-demo' : ''}`}>
