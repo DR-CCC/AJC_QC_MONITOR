@@ -153,12 +153,13 @@ body {
 .line-table tr.no-record .line-badge { background: #1e2533; color: #718096; }
 /* Column widths: Line, FGQC Source, Product, Item, Inspected, Defective, Rate */
 .line-table th:nth-child(1), .line-table td:nth-child(1) { width: 60px; }
-.line-table th:nth-child(2), .line-table td:nth-child(2) { width: 80px; }
-.line-table th:nth-child(3), .line-table td:nth-child(3) { width: 80px; }
-.line-table th:nth-child(4), .line-table td:nth-child(4) { width: auto; }
-.line-table th:nth-child(5), .line-table td:nth-child(5) { width: 78px; text-align: right; }
-.line-table th:nth-child(6), .line-table td:nth-child(6) { width: 72px; text-align: right; }
-.line-table th:nth-child(7), .line-table td:nth-child(7) { width: 120px; }
+.line-table th:nth-child(2), .line-table td:nth-child(2) { width: 70px; }
+.line-table th:nth-child(3), .line-table td:nth-child(3) { width: 72px; }
+.line-table th:nth-child(4), .line-table td:nth-child(4) { width: 110px; }
+.line-table th:nth-child(5), .line-table td:nth-child(5) { width: 72px; text-align: right; }
+.line-table th:nth-child(6), .line-table td:nth-child(6) { width: 66px; text-align: right; }
+.line-table th:nth-child(7), .line-table td:nth-child(7) { width: 110px; }
+.line-table th:nth-child(8), .line-table td:nth-child(8) { width: 58px; text-align: center; }
 .line-badge {
   display: inline-block;
   padding: 2px 6px;
