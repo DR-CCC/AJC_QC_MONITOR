@@ -27,11 +27,11 @@ function formFromEvent(evt) {
 }
 
 const CAT_COLORS = {
-  Stitching: '#1A90C8',
-  Material:  '#16A070',
-  Assembly:  '#D98010',
-  Finishing: '#9870D8',
-  Safety:    '#D83A3A',
+  Stitching: '#2F5D6E',
+  Material:  '#3D7A4A',
+  Assembly:  '#A85E16',
+  Finishing: '#776F62',
+  Safety:    '#A33028',
 };
 
 export default function LineQCPage({
@@ -314,7 +314,7 @@ export default function LineQCPage({
                     <div key={cat} className="lqc-deflist-group">
                       <div
                         className="lqc-deflist-cat"
-                        style={{ color: CAT_COLORS[cat] || '#6A8AAE' }}
+                        style={{ color: CAT_COLORS[cat] || '#776F62' }}
                       >
                         {cat}
                         {cat === 'Safety' && <span style={{ marginLeft: 6, fontSize: 10 }}>⚠ CRITICAL</span>}
