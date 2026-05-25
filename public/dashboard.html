@@ -900,8 +900,8 @@ setInterval(updateClock, 10000);
   try {
     const cached = JSON.parse(localStorage.getItem('aj_lines_cache') || 'null');
     if (!cached || !Array.isArray(cached.lines) || cached.lines.length === 0) return;
-    // 8시간(1교대) 이내 데이터만 복원
-    if (Date.now() - (cached.ts || 0) > 8 * 3600 * 1000) return;
+    // 7일 이내 데이터 복원 (수동 "다른 파일 불러오기" 시 캐시 삭제됨)
+    if (Date.now() - (cached.ts || 0) > 7 * 24 * 3600 * 1000) return;
     LINES = cached.lines;
     if (cached.name) showFileInfo(cached.name + ' (캐시)', LINES.length);
     document.getElementById('uploadScreen').style.display = 'none';
