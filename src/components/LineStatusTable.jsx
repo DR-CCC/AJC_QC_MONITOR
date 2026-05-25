@@ -51,42 +51,43 @@ export default function LineStatusTable({ lines, floor, onSelectLine }) {
                   <span className="line-badge">{row.line}</span>
                   {row.hasLiveData && <span className="live-badge">{t('liveTag')}</span>}
                 </td>
-                <td style={{ color: '#8A93A0', fontSize: 11 }}>
+                <td style={{ color: 'var(--text-3)', fontSize: 11, fontFamily: 'var(--font-mono)' }}>
                   {row.sourceLines?.length ? row.sourceLines.join(', ') : '-'}
                 </td>
-                <td style={{ color: '#4A5260' }}>{row.product_code || '-'}</td>
+                <td style={{ color: 'var(--text-2)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{row.product_code || '-'}</td>
                 <td>
                   {noData ? (
-                    <span style={{ color: '#8A93A0', fontStyle: 'italic' }}>
+                    <span style={{ color: 'var(--text-3)', fontStyle: 'italic' }}>
                       {t('noFgqcRecord')}
                     </span>
                   ) : (
                     row.item_name || '-'
                   )}
                   {!noData && row.color ? (
-                    <span style={{ color: '#8A93A0', fontSize: 11 }}> - {row.color}</span>
+                    <span style={{ color: 'var(--text-3)', fontSize: 11 }}> - {row.color}</span>
                   ) : null}
                 </td>
-                <td style={{ fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}>
+                <td style={{ fontVariantNumeric: 'tabular-nums', textAlign: 'right', fontFamily: 'var(--font-mono)' }}>
                   {noData ? '-' : row.inspection_qty.toLocaleString()}
                 </td>
                 <td
                   style={{
                     fontVariantNumeric: 'tabular-nums',
                     textAlign: 'right',
-                    color: noData ? '#8A93A0' : '#DC2626',
+                    fontFamily: 'var(--font-mono)',
+                    color: noData ? 'var(--text-3)' : 'var(--bad)',
                   }}
                 >
                   {noData ? '-' : row.defective_qty}
                 </td>
                 <td>
                   {noData ? (
-                    <span style={{ color: '#8A93A0' }}>-</span>
+                    <span style={{ color: 'var(--text-3)' }}>-</span>
                   ) : (
                     <div className="rate-cell">
                       <span
                         className={`rate-${cls}`}
-                        style={{ minWidth: 48, fontVariantNumeric: 'tabular-nums' }}
+                        style={{ minWidth: 48, fontVariantNumeric: 'tabular-nums', fontFamily: 'var(--font-mono)' }}
                       >
                         {(row.defect_rate * 100).toFixed(2)}%
                       </span>

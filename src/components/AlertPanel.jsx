@@ -89,12 +89,12 @@ export default function AlertPanel({ alerts }) {
             </div>
             <div className="alert-msg">{alert.message}</div>
             <div className="alert-meta">
-              <span>{t('valLabel')}: <strong style={{ color: '#14181F' }}>{
+              <span>{t('valLabel')}: <strong style={{ color: 'var(--text)' }}>{
                 alert.metric === 'defect_rate'
                   ? `${(alert.current_value * 100).toFixed(2)}%`
                   : alert.current_value
               }</strong></span>
-              <span>{t('thresholdLabel')}: <strong style={{ color: '#14181F' }}>{
+              <span>{t('thresholdLabel')}: <strong style={{ color: 'var(--text)' }}>{
                 alert.metric === 'defect_rate'
                   ? `${(alert.threshold * 100).toFixed(2)}%`
                   : alert.threshold

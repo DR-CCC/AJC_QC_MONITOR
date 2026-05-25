@@ -5,7 +5,7 @@ export default function EntryList({ events, onEdit, onDelete }) {
 
   if (!events.length) {
     return (
-      <div style={{ padding: '12px 14px', color: '#8A93A0', fontSize: 12 }}>
+      <div style={{ padding: '12px 14px', color: 'var(--text-3)', fontSize: 12 }}>
         오늘 입력된 항목이 없습니다.
       </div>
     );

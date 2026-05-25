@@ -36,20 +36,20 @@ function CustomTooltip({ active, payload }) {
   return (
     <div
       style={{
-        background: '#1a1f2e',
-        border: '1px solid #2d3748',
-        borderRadius: 5,
+        background: '#0E1520',
+        border: '1px solid #243050',
+        borderRadius: 3,
         padding: '8px 12px',
         fontSize: 12,
       }}
     >
-      <div style={{ fontWeight: 700, color: '#e2e8f0' }}>{data.code}</div>
-      <div style={{ color: '#a0aec0' }}>{data.name}</div>
-      <div style={{ color: data.safety ? '#fc8181' : '#68d391', marginTop: 4 }}>
-        Count: {data.count.toLocaleString()}
+      <div style={{ fontWeight: 700, color: '#BED0EA' }}>{data.code}</div>
+      <div style={{ color: '#6A8AAE' }}>{data.name}</div>
+      <div style={{ color: data.safety ? '#D83A3A' : '#1A90C8', marginTop: 4 }}>
+        {data.count.toLocaleString()}건
       </div>
       {data.safety && (
-        <div style={{ color: '#fc8181', fontSize: 10, marginTop: 2 }}>
+        <div style={{ color: '#D83A3A', fontSize: 10, marginTop: 2, letterSpacing: '0.06em' }}>
           SAFETY / REGULATION
         </div>
       )}
@@ -65,33 +65,33 @@ export default function DefectChart({ lines, catalog }) {
     <div className="panel chart-wrap">
       <div className="panel-title">
         {t('chartTitle')}
-        <span style={{ marginLeft: 12, fontSize: 10, color: '#fc8181' }}>
-          Safety: {t('chartSafety')}
+        <span style={{ marginLeft: 12, fontSize: 10, color: '#D83A3A', letterSpacing: '0.06em' }}>
+          SAFETY: {t('chartSafety')}
         </span>
-        <span style={{ marginLeft: 8, fontSize: 10, color: '#4299e1' }}>
-          Normal: {t('chartNormal')}
+        <span style={{ marginLeft: 8, fontSize: 10, color: '#1A90C8', letterSpacing: '0.06em' }}>
+          NORMAL: {t('chartNormal')}
         </span>
       </div>
       <ResponsiveContainer width="100%" height={200}>
         <BarChart data={data} margin={{ top: 18, right: 8, left: -20, bottom: 24 }}>
           <XAxis
             dataKey="code"
-            tick={{ fill: '#718096', fontSize: 10 }}
+            tick={{ fill: '#4E6888', fontSize: 10, fontFamily: 'IBM Plex Mono, monospace' }}
             angle={-40}
             textAnchor="end"
             interval={0}
           />
-          <YAxis tick={{ fill: '#718096', fontSize: 10 }} />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
-          <Bar dataKey="count" radius={[3, 3, 0, 0]}>
+          <YAxis tick={{ fill: '#4E6888', fontSize: 10, fontFamily: 'IBM Plex Mono, monospace' }} />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+          <Bar dataKey="count" radius={[2, 2, 0, 0]}>
             <LabelList
               dataKey="count"
               position="top"
-              style={{ fill: '#718096', fontSize: 9 }}
+              style={{ fill: '#4E6888', fontSize: 9 }}
               formatter={value => (value > 0 ? value.toLocaleString() : '')}
             />
             {data.map(entry => (
-              <Cell key={entry.code} fill={entry.safety ? '#e53e3e' : '#4299e1'} />
+              <Cell key={entry.code} fill={entry.safety ? '#D83A3A' : '#1A90C8'} />
             ))}
           </Bar>
         </BarChart>

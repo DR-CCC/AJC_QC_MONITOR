@@ -117,13 +117,13 @@ export default function DefectInputForm({ catalog, extraEvents, onSubmit, editin
       {isEditing && (
         <div className="edit-banner">
           <span>
-            Editing: {editingEvent.line} · {editingEvent.defect_code}
+            수정 중: {editingEvent.line} · {editingEvent.defect_code}
             {' '}
-            <span style={{ color: '#718096' }}>
-              ({new Date(editingEvent.created_at).toLocaleTimeString('en-US', { hour12: false })})
+            <span style={{ color: 'var(--text-3)' }}>
+              ({new Date(editingEvent.created_at).toLocaleTimeString('ko-KR', { hour12: false })})
             </span>
           </span>
-          <button className="btn-cancel-edit" type="button" onClick={onCancelEdit}>Cancel</button>
+          <button className="btn-cancel-edit" type="button" onClick={onCancelEdit}>취소</button>
         </div>
       )}
       <form className="input-form-panel" onSubmit={handleSubmit} autoComplete="off">
@@ -222,7 +222,7 @@ export default function DefectInputForm({ catalog, extraEvents, onSubmit, editin
           </div>
         </div>
         <button type="submit" className="btn-submit">
-          {isEditing ? 'Update Entry' : t('formSubmit')}
+          {isEditing ? '수정 완료' : t('formSubmit')}
         </button>
         {toast && <div className="toast">✓ {toast}</div>}
       </form>

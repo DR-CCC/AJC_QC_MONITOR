@@ -35,7 +35,7 @@ export default function DataCoveragePanel({ liveRows, coverageStats }) {
             <span className="coverage-label">
               Non-sewing FGQC ({coverageStats.extraFgqcLines.length})
               {coverageStats.suspectLines?.length > 0 && (
-                <span style={{ color: '#f6ad55', marginLeft: 6 }}>⚠ check typos</span>
+                <span style={{ color: 'var(--warn)', marginLeft: 6 }}>⚠ check typos</span>
               )}
             </span>
             <p>{coverageStats.extraFgqcLines.length ? coverageStats.extraFgqcLines.join(', ') : 'None'}</p>

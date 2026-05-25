@@ -24,7 +24,7 @@
   --black:       #E0EAF8;
   --text:        #BED0EA;
   --text-2:      #6A8AAE;
-  --text-3:      #3E5878;
+  --text-3:      #4E6888;
   --text-4:      #243050;
   --ok:          #16A070;
   --warn:        #D98010;
@@ -686,7 +686,7 @@ function filtered() {
   return activeFloor === 'all' ? LINES : LINES.filter(l => l.floor === activeFloor);
 }
 function rateClass(r) { return r >= 0.85 ? 'rate-ok' : r >= 0.6 ? 'rate-warn' : 'rate-bad'; }
-function rateColor(r) { return r >= 0.85 ? '#16A34A' : r >= 0.6 ? '#D97706' : '#DC2626'; }
+function rateColor(r) { return r >= 0.85 ? '#16A070' : r >= 0.6 ? '#D98010' : '#D83A3A'; }
 function kpiClass(r) { return r >= 0.85 ? 'ok' : r >= 0.6 ? 'warn' : 'danger'; }
 
 function renderLineList() {
@@ -731,10 +731,10 @@ function renderDetail() {
     document.getElementById('kActual').textContent = '—';
     document.getElementById('kTarget').textContent = '—';
     document.getElementById('kRate').textContent = '—';
-    document.getElementById('kRate').style.color = '#8A93A0';
+    document.getElementById('kRate').style.color = '#6A8AAE';
     document.getElementById('kRateSub').textContent = '보조 라인';
     document.getElementById('kDefect').textContent = '—';
-    document.getElementById('kDefect').style.color = '#14181F';
+    document.getElementById('kDefect').style.color = '#BED0EA';
     document.getElementById('kDefectSub').textContent = '—';
     document.getElementById('kWorker').textContent = l.workers;
     renderChart(l);
@@ -764,13 +764,13 @@ function renderDetail() {
     const liveRate = qcRow.defect_rate;
     dEl.textContent = (liveRate * 100).toFixed(1) + '%';
     const liveBad = liveRate > 0.05;
-    dEl.style.color = liveBad ? '#DC2626' : '#16A34A';
+    dEl.style.color = liveBad ? '#D83A3A' : '#16A070';
     subEl.innerHTML = `${qcRow.defect_count}건 발생 <span class="live-qc-badge">● LIVE QC</span>`;
     if (liveBad) document.getElementById('kpiDefect').classList.add('danger');
   } else {
     dEl.textContent = (l.defectRate * 100).toFixed(1) + '%';
     const defectBad = l.defectRate > 0.05;
-    dEl.style.color = defectBad ? '#DC2626' : '#16A34A';
+    dEl.style.color = defectBad ? '#D83A3A' : '#16A070';
     subEl.textContent = `${l.defectCount}건 발생`;
     if (defectBad) document.getElementById('kpiDefect').classList.add('danger');
   }
@@ -802,11 +802,11 @@ function renderChart(l) {
   const hTarget = l.target > 0 ? l.target / 9 : 0;
 
   const colors = data.map((c, i) => {
-    if (c === null) return '#EFF1F4';
-    if (labels[i] === '12') return '#CDD2DA';
-    if (hTarget === 0) return '#2A8FCB';
+    if (c === null) return '#182035';
+    if (labels[i] === '12') return '#243050';
+    if (hTarget === 0) return '#1A90C8';
     const rr = c / hTarget;
-    return rr >= 0.85 ? '#2A8FCB' : rr >= 0.6 ? '#D97706' : '#DC2626';
+    return rr >= 0.85 ? '#1A90C8' : rr >= 0.6 ? '#D98010' : '#D83A3A';
   });
 
   const datasets = [{
@@ -818,7 +818,7 @@ function renderChart(l) {
     datasets.push({
       label: '목표', type: 'line',
       data: labels.map((lab, i) => lab === '12' ? null : (l.hourly[i].count === null ? null : hTarget)),
-      borderColor: '#8A93A0', borderDash: [4, 4], borderWidth: 1.5,
+      borderColor: '#4E6888', borderDash: [4, 4], borderWidth: 1.5,
       pointRadius: 0, fill: false, tension: 0, spanGaps: false,
     });
   }
@@ -835,8 +835,8 @@ function renderChart(l) {
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: '#FFFFFF', borderColor: '#E4E7EC', borderWidth: 1,
-          titleColor: '#14181F', bodyColor: '#4A5260', padding: 12,
+          backgroundColor: '#0E1520', borderColor: '#243050', borderWidth: 1,
+          titleColor: '#BED0EA', bodyColor: '#6A8AAE', padding: 12,
           titleFont: { family: "'IBM Plex Sans KR', sans-serif", weight: '500' },
           bodyFont: { family: "'IBM Plex Sans KR', sans-serif" },
           callbacks: {
@@ -847,12 +847,12 @@ function renderChart(l) {
       },
       scales: {
         x: {
-          ticks: { font: { size: 11, family: "'JetBrains Mono', monospace" }, color: '#8A93A0', autoSkip: false },
-          grid: { display: false }, border: { color: '#E4E7EC' },
+          ticks: { font: { size: 11, family: "'IBM Plex Mono', monospace" }, color: '#4E6888', autoSkip: false },
+          grid: { display: false }, border: { color: '#182035' },
         },
         y: {
-          ticks: { font: { size: 11, family: "'JetBrains Mono', monospace" }, color: '#8A93A0' },
-          grid: { color: '#F0F1F4' }, border: { display: false }, min: 0,
+          ticks: { font: { size: 11, family: "'IBM Plex Mono', monospace" }, color: '#4E6888' },
+          grid: { color: '#182035' }, border: { display: false }, min: 0,
         },
       },
     },

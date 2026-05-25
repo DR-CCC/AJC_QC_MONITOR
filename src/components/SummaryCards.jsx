@@ -16,7 +16,7 @@ export default function SummaryCards({ summary, alertCount }) {
         </div>
         <div className="summary-card">
           <div className="label">{t('cardDefective')}</div>
-          <div className="value" style={{ color: '#fc8181' }}>{total_defective_qty.toLocaleString()}</div>
+          <div className="value" style={{ color: 'var(--bad)' }}>{total_defective_qty.toLocaleString()}</div>
           <div className="sub">{t('cardUnitsTotal')}</div>
         </div>
         <div className={`summary-card ${rateClass}`}>

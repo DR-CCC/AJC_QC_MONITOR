@@ -26,13 +26,12 @@ function formFromEvent(evt) {
   };
 }
 
-// DEF 코드 카테고리별 색상 (자명_B 라이트 테마)
 const CAT_COLORS = {
-  Stitching:  '#2A8FCB',
-  Material:   '#16A34A',
-  Assembly:   '#D97706',
-  Finishing:  '#9333EA',
-  Safety:     '#DC2626',
+  Stitching: '#1A90C8',
+  Material:  '#16A070',
+  Assembly:  '#D98010',
+  Finishing: '#9870D8',
+  Safety:    '#D83A3A',
 };
 
 export default function LineQCPage({
@@ -315,7 +314,7 @@ export default function LineQCPage({
                     <div key={cat} className="lqc-deflist-group">
                       <div
                         className="lqc-deflist-cat"
-                        style={{ color: CAT_COLORS[cat] || '#a0aec0' }}
+                        style={{ color: CAT_COLORS[cat] || '#6A8AAE' }}
                       >
                         {cat}
                         {cat === 'Safety' && <span style={{ marginLeft: 6, fontSize: 10 }}>⚠ CRITICAL</span>}
@@ -386,7 +385,7 @@ export default function LineQCPage({
           <div className="lqc-section-label">
             오늘 입력 내역 · {line}
             {lineEvents.length > 0 && (
-              <span style={{ marginLeft: 8, color: '#16A34A', fontWeight: 700 }}>
+              <span style={{ marginLeft: 8, color: 'var(--ok)', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
                 {lineEvents.length}건
               </span>
             )}
