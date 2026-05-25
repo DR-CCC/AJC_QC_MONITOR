@@ -7,6 +7,7 @@ import DefectInputForm from './components/DefectInputForm';
 import DataCoveragePanel from './components/DataCoveragePanel';
 import EntryList from './components/EntryList';
 import ExportButton from './components/ExportButton';
+import LineQCPage from './components/LineQCPage';
 import { fetchDashboardPayload, fetchDefectCatalog } from './data/mockApi';
 import {
   buildExpectedLineRows,
@@ -47,6 +48,7 @@ export default function App() {
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [dashboardData, setDashboardData] = useState(null);
   const [thresholds, setThresholds] = useState(() => loadThresholds());
+  const [selectedLine, setSelectedLine] = useState(null);
   const now = useTime();
 
   const demoLoading = isDemoMode && !dashboardData;
@@ -120,7 +122,7 @@ export default function App() {
   function handleNewEvent(event) {
     setExtraEvents(prev => [event, ...prev]);
     setEditingEvent(null);
-    setSideTab(TAB_DASHBOARD);
+    if (!selectedLine) setSideTab(TAB_DASHBOARD);
   }
 
   function handleEditEvent(updatedEvent) {
@@ -137,6 +139,24 @@ export default function App() {
   function startEdit(event) {
     setEditingEvent(event);
     setSideTab(TAB_INPUT);
+  }
+
+  if (selectedLine) {
+    const lineAlerts = liveAlerts.filter(
+      a => (a.line || '').toUpperCase() === selectedLine.toUpperCase(),
+    );
+    return (
+      <LineQCPage
+        line={selectedLine}
+        allEvents={extraEvents}
+        onAddEvent={handleNewEvent}
+        onDeleteEvent={handleDeleteEvent}
+        catalog={catalogData}
+        lineAlerts={lineAlerts}
+        onBack={() => setSelectedLine(null)}
+        now={now}
+      />
+    );
   }
 
   return (
@@ -199,7 +219,7 @@ export default function App() {
           <SummaryCards summary={summary} alertCount={visibleAlerts.length} />
           <DataCoveragePanel liveRows={liveRows} coverageStats={coverageStats} />
           <DefectChart lines={chartLines} catalog={catalogData} />
-          <LineStatusTable lines={displayLines} floor={floor} />
+          <LineStatusTable lines={displayLines} floor={floor} onSelectLine={setSelectedLine} />
         </div>
 
         <div className="side-col">

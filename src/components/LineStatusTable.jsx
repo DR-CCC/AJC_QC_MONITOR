@@ -6,7 +6,7 @@ function rateClass(rate) {
   return 'ok';
 }
 
-export default function LineStatusTable({ lines, floor }) {
+export default function LineStatusTable({ lines, floor, onSelectLine }) {
   const t = useT();
   const showFloor2Notice =
     floor === 'floor2' && lines.every(row => !row.hasFgqcRecord && !row.hasLiveData);
@@ -36,6 +36,7 @@ export default function LineStatusTable({ lines, floor }) {
             <th style={{ textAlign: 'right' }}>{t('colInspected')}</th>
             <th style={{ textAlign: 'right' }}>{t('colDefective')}</th>
             <th>{t('colRate')}</th>
+            {onSelectLine && <th style={{ width: 52 }} />}
           </tr>
         </thead>
         <tbody>
@@ -98,6 +99,16 @@ export default function LineStatusTable({ lines, floor }) {
                     </div>
                   )}
                 </td>
+                {onSelectLine && (
+                  <td>
+                    <button
+                      className="qc-open-btn"
+                      onClick={() => onSelectLine(row.line)}
+                    >
+                      QC →
+                    </button>
+                  </td>
+                )}
               </tr>
             );
           })}
