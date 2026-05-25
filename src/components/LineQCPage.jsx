@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { loadLineSession, saveLineSession } from '../data/lineSessionStorage';
 
 const PROCESSES = Array.from({ length: 17 }, (_, i) => `공정 ${i + 1}`);
@@ -15,15 +15,25 @@ function defCodeFromNum(num) {
   return `DEF-${String(n).padStart(2, '0')}`;
 }
 
-const EMPTY_FORM = { process: PROCESSES[0], defCodeNum: '', defect_count: '' };
+const EMPTY_FORM = { process: PROCESSES[0], defCodeNum: '', inspection_qty: '', defect_count: '' };
 
 function formFromEvent(evt) {
   return {
     process: PROCESSES.includes(evt.process) ? evt.process : PROCESSES[0],
     defCodeNum: defNumFromCode(evt.defect_code),
+    inspection_qty: String(evt.inspection_qty || ''),
     defect_count: String(evt.defect_count ?? ''),
   };
 }
+
+// DEF 코드 카테고리별 색상
+const CAT_COLORS = {
+  Stitching:  '#90cdf4',
+  Material:   '#68d391',
+  Assembly:   '#f6ad55',
+  Finishing:  '#d6bcfa',
+  Safety:     '#fc8181',
+};
 
 export default function LineQCPage({
   line, allEvents, onAddEvent, onUpdateEvent, onDeleteEvent,
@@ -32,23 +42,20 @@ export default function LineQCPage({
   const [session, setSession] = useState(() => loadLineSession(line));
   const [editingSession, setEditingSession] = useState(() => {
     const s = loadLineSession(line);
-    return !s.product_code && !s.inspection_qty;
+    return !s.product_code;
   });
   const [sessionDraft, setSessionDraft] = useState(() => loadLineSession(line));
   const [form, setForm] = useState(EMPTY_FORM);
   const [editingEvent, setEditingEvent] = useState(null);
+  const [showDefList, setShowDefList] = useState(false);
   const [toast, setToast] = useState('');
+  const defListRef = useRef(null);
 
   const lineEvents = useMemo(
     () => allEvents
       .filter(e => (e.line || '').toUpperCase() === line.toUpperCase())
       .sort((a, b) => b.created_at.localeCompare(a.created_at)),
     [allEvents, line],
-  );
-
-  const hasCommittedQty = useMemo(
-    () => lineEvents.some(e => Number(e.inspection_qty || 0) > 0),
-    [lineEvents],
   );
 
   const resolvedDef = useMemo(() => {
@@ -61,9 +68,20 @@ export default function LineQCPage({
     if (!form.defCodeNum) return null;
     const n = parseInt(form.defCodeNum, 10);
     if (isNaN(n) || n < 1 || n > 99) return '1~99 사이 숫자를 입력하세요';
-    if (!resolvedDef) return `DEF-${String(n).padStart(2, '0')} 코드가 없습니다`;
+    if (!resolvedDef) return `DEF-${String(n).padStart(2, '0')} 코드 없음`;
     return null;
   }, [form.defCodeNum, resolvedDef]);
+
+  // 카테고리별로 그룹핑된 catalog
+  const catalogByCategory = useMemo(() => {
+    const groups = {};
+    for (const c of catalog) {
+      const cat = c.category_label || c.category || 'Other';
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(c);
+    }
+    return groups;
+  }, [catalog]);
 
   const criticalCount = lineAlerts.filter(a => a.severity === 'critical').length;
   const warnCount = lineAlerts.filter(a => a.severity === 'warning').length;
@@ -83,10 +101,16 @@ export default function LineQCPage({
     setEditingSession(false);
   }
 
+  function selectDefCode(code) {
+    setF('defCodeNum', defNumFromCode(code));
+    setShowDefList(false);
+  }
+
   function startEdit(evt) {
     setEditingEvent(evt);
     setForm(formFromEvent(evt));
     setEditingSession(false);
+    setShowDefList(false);
   }
 
   function cancelEdit() {
@@ -98,27 +122,19 @@ export default function LineQCPage({
     e.preventDefault();
     if (!resolvedDef || defError || !form.defect_count) return;
 
-    if (!editingEvent && !hasCommittedQty && !session.inspection_qty) {
-      setEditingSession(true);
-      setSessionDraft({ ...session });
-      setToast('⚠ 검사수량을 먼저 입력해 주세요');
-      setTimeout(() => setToast(''), 3000);
-      return;
-    }
-
     if (editingEvent) {
       onUpdateEvent?.({
         ...editingEvent,
         process: form.process,
         defect_code: resolvedDef.code,
         defect_count: Number(form.defect_count),
+        inspection_qty: Number(form.inspection_qty) || 0,
         updated_at: new Date().toISOString(),
       });
       setToast(`✓ 수정: ${resolvedDef.code} × ${form.defect_count}`);
       setEditingEvent(null);
       setForm(EMPTY_FORM);
     } else {
-      const inspQty = hasCommittedQty ? 0 : Number(session.inspection_qty || 0);
       onAddEvent({
         event_id: `evt-${Date.now()}`,
         created_at: new Date().toISOString(),
@@ -129,9 +145,10 @@ export default function LineQCPage({
         item_name: session.item_name,
         defect_code: resolvedDef.code,
         defect_count: Number(form.defect_count),
-        inspection_qty: inspQty,
+        inspection_qty: Number(form.inspection_qty) || 0,
       });
-      setForm(prev => ({ ...prev, defect_count: '' }));
+      // 입력 후: 불량수·검사수량 초기화, 공정·코드번호는 유지
+      setForm(prev => ({ ...prev, defect_count: '', inspection_qty: '' }));
       setToast(`✓ ${resolvedDef.code} × ${form.defect_count}`);
     }
     setTimeout(() => setToast(''), 2500);
@@ -165,7 +182,7 @@ export default function LineQCPage({
 
       <div className="lqc-body">
 
-        {/* Session info */}
+        {/* Session info (product / item / worker only) */}
         <div className="lqc-session-card">
           <div className="lqc-session-hdr">
             <span className="lqc-section-label">세션 정보</span>
@@ -187,13 +204,6 @@ export default function LineQCPage({
                 <span className="chip-lbl">작업자</span>
                 {session.worker_id || <span className="chip-empty">미설정</span>}
               </span>
-              <span className="lqc-chip">
-                <span className="chip-lbl">검사수량</span>
-                {session.inspection_qty
-                  ? <>{Number(session.inspection_qty).toLocaleString()}{hasCommittedQty && <span className="chip-committed"> ✓반영</span>}</>
-                  : <span className="chip-empty">미설정</span>
-                }
-              </span>
             </div>
           ) : (
             <div className="lqc-session-form">
@@ -211,12 +221,6 @@ export default function LineQCPage({
                 <label>작업자 ID</label>
                 <input type="text" placeholder="W-1024" value={sessionDraft.worker_id}
                   onChange={e => setSessionDraft(p => ({ ...p, worker_id: e.target.value }))} />
-              </div>
-              <div className="lqc-srow">
-                <label>검사 수량</label>
-                <input type="number" inputMode="numeric" pattern="[0-9]*" placeholder="240"
-                  value={sessionDraft.inspection_qty}
-                  onChange={e => setSessionDraft(p => ({ ...p, inspection_qty: e.target.value }))} />
               </div>
               <div className="lqc-session-actions">
                 <button className="lqc-session-cancel" type="button" onClick={() => setEditingSession(false)}>취소</button>
@@ -255,7 +259,8 @@ export default function LineQCPage({
           )}
 
           <form className="lqc-quick-form" onSubmit={handleSubmit} autoComplete="off">
-            {/* Process */}
+
+            {/* 공정 */}
             <div className="lqc-qfield">
               <label>공정</label>
               <select value={form.process} onChange={e => setF('process', e.target.value)}>
@@ -263,16 +268,15 @@ export default function LineQCPage({
               </select>
             </div>
 
-            {/* DEF code number input */}
-            <div className="lqc-qfield lqc-qfield-def">
+            {/* 불량코드 번호 + 목록 */}
+            <div className="lqc-qfield lqc-qfield-def" style={{ position: 'relative' }}>
               <label>불량코드 (번호)</label>
               <div className="lqc-def-row">
                 <input
                   type="number"
                   inputMode="numeric"
                   pattern="[0-9]*"
-                  min="1"
-                  max="99"
+                  min="1" max="99"
                   placeholder="11"
                   value={form.defCodeNum}
                   onChange={e => setF('defCodeNum', e.target.value)}
@@ -291,15 +295,68 @@ export default function LineQCPage({
                   ) : defError ? (
                     <span className="lqc-def-err">{defError}</span>
                   ) : (
-                    <span className="lqc-def-hint">1~43 입력</span>
+                    <span className="lqc-def-hint">번호 입력</span>
                   )}
                 </div>
+                <button
+                  type="button"
+                  className={`lqc-deflist-toggle${showDefList ? ' open' : ''}`}
+                  onClick={() => setShowDefList(p => !p)}
+                  title="코드 목록"
+                >
+                  {showDefList ? '▲' : '목록 ▼'}
+                </button>
               </div>
+
+              {/* DEF 코드 목록 패널 */}
+              {showDefList && (
+                <div className="lqc-deflist-panel" ref={defListRef}>
+                  {Object.entries(catalogByCategory).map(([cat, codes]) => (
+                    <div key={cat} className="lqc-deflist-group">
+                      <div
+                        className="lqc-deflist-cat"
+                        style={{ color: CAT_COLORS[cat] || '#a0aec0' }}
+                      >
+                        {cat}
+                        {cat === 'Safety' && <span style={{ marginLeft: 6, fontSize: 10 }}>⚠ CRITICAL</span>}
+                      </div>
+                      <div className="lqc-deflist-items">
+                        {codes.map(c => (
+                          <button
+                            key={c.code}
+                            type="button"
+                            className={`lqc-deflist-item${resolvedDef?.code === c.code ? ' selected' : ''}`}
+                            onClick={() => selectDefCode(c.code)}
+                          >
+                            <span className="ldi-num">{parseInt(c.code.replace('DEF-', ''), 10)}</span>
+                            <span className="ldi-name">{c.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Defect count */}
+            {/* 검사수량 */}
+            <div className="lqc-qfield lqc-qfield-qty">
+              <label>검사수량</label>
+              <input
+                type="number"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                min="0"
+                placeholder="0"
+                value={form.inspection_qty}
+                onChange={e => setF('inspection_qty', e.target.value)}
+                className="lqc-qty-input"
+              />
+            </div>
+
+            {/* 불량수 */}
             <div className="lqc-qfield lqc-qfield-count">
-              <label>불량 수</label>
+              <label>불량수</label>
               <input
                 type="number"
                 inputMode="numeric"
@@ -352,24 +409,10 @@ export default function LineQCPage({
                   <span className="lqc-log-def">{e.defect_code}</span>
                   <span className="lqc-log-count">× {e.defect_count}</span>
                   {Number(e.inspection_qty) > 0 && (
-                    <span className="lqc-log-qty">검사 {Number(e.inspection_qty).toLocaleString()}</span>
+                    <span className="lqc-log-qty">/{Number(e.inspection_qty).toLocaleString()}</span>
                   )}
-                  <button
-                    className="lqc-log-edit"
-                    type="button"
-                    onClick={() => startEdit(e)}
-                    aria-label="수정"
-                  >
-                    ✎
-                  </button>
-                  <button
-                    className="lqc-log-del"
-                    type="button"
-                    onClick={() => onDeleteEvent(e.event_id)}
-                    aria-label="삭제"
-                  >
-                    ✕
-                  </button>
+                  <button className="lqc-log-edit" type="button" onClick={() => startEdit(e)} aria-label="수정">✎</button>
+                  <button className="lqc-log-del" type="button" onClick={() => onDeleteEvent(e.event_id)} aria-label="삭제">✕</button>
                 </div>
               ))}
             </div>
