@@ -63,14 +63,14 @@ export default function AlertPanel({ alerts }) {
       </div>
 
       <div className="threshold-legend">
-        Thresholds — <span className="warn">WARNING: ≥5% rate or ≥5× same code</span>
+        임계값 — <span className="warn">경고: 불량률 5% 이상 또는 동일 코드 5회 이상</span>
         {' · '}
-        <span className="crit">CRITICAL: ≥8% rate or Safety DEF (DEF-39~43)</span>
+        <span className="crit">위험: 불량률 8% 이상 또는 안전 불량 (DEF-39~43)</span>
       </div>
 
       <div className="alert-list">
         {sorted.length === 0 && (
-          <div style={{ color: '#4a5568', textAlign: 'center', padding: '20px 0' }}>{t('noAlerts')}</div>
+          <div style={{ color: '#8A93A0', textAlign: 'center', padding: '20px 0' }}>{t('noAlerts')}</div>
         )}
         {hiddenCount > 0 && (
           <div className="alert-overflow-note">
@@ -89,12 +89,12 @@ export default function AlertPanel({ alerts }) {
             </div>
             <div className="alert-msg">{alert.message}</div>
             <div className="alert-meta">
-              <span>{t('valLabel')}: <strong style={{ color: '#e2e8f0' }}>{
+              <span>{t('valLabel')}: <strong style={{ color: '#14181F' }}>{
                 alert.metric === 'defect_rate'
                   ? `${(alert.current_value * 100).toFixed(2)}%`
                   : alert.current_value
               }</strong></span>
-              <span>{t('thresholdLabel')}: <strong style={{ color: '#e2e8f0' }}>{
+              <span>{t('thresholdLabel')}: <strong style={{ color: '#14181F' }}>{
                 alert.metric === 'defect_rate'
                   ? `${(alert.threshold * 100).toFixed(2)}%`
                   : alert.threshold

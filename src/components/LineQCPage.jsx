@@ -162,17 +162,17 @@ export default function LineQCPage({
         </button>
         <div className="lqc-title">
           <span className="lqc-line-badge-big">{line}</span>
-          <span className="lqc-title-label">QC Monitor</span>
+          <span className="lqc-title-label">QC 모니터</span>
         </div>
         <div className="lqc-header-right">
           {criticalCount > 0 && (
-            <span className="lqc-severity-badge crit">● {criticalCount} CRITICAL</span>
+            <span className="lqc-severity-badge crit">위험 {criticalCount}건</span>
           )}
           {warnCount > 0 && (
-            <span className="lqc-severity-badge warn">▲ {warnCount} WARNING</span>
+            <span className="lqc-severity-badge warn">경고 {warnCount}건</span>
           )}
           {criticalCount === 0 && warnCount === 0 && (
-            <span className="lqc-severity-badge ok">✓ 정상</span>
+            <span className="lqc-severity-badge ok">정상</span>
           )}
           <span className="header-time">
             {now.toLocaleTimeString('en-US', { hour12: false })}
@@ -375,7 +375,7 @@ export default function LineQCPage({
               className={`lqc-submit-btn${editingEvent ? ' editing' : ''}`}
               disabled={!!defError || !resolvedDef}
             >
-              {editingEvent ? '수정 완료' : '+ 입력'}
+              {editingEvent ? '수정 완료' : '등록'}
             </button>
           </form>
           {toast && <div className="lqc-toast">{toast}</div>}
@@ -386,7 +386,7 @@ export default function LineQCPage({
           <div className="lqc-section-label">
             오늘 입력 내역 · {line}
             {lineEvents.length > 0 && (
-              <span style={{ marginLeft: 8, color: '#68d391', fontWeight: 700 }}>
+              <span style={{ marginLeft: 8, color: '#16A34A', fontWeight: 700 }}>
                 {lineEvents.length}건
               </span>
             )}
@@ -411,8 +411,8 @@ export default function LineQCPage({
                   {Number(e.inspection_qty) > 0 && (
                     <span className="lqc-log-qty">/{Number(e.inspection_qty).toLocaleString()}</span>
                   )}
-                  <button className="lqc-log-edit" type="button" onClick={() => startEdit(e)} aria-label="수정">✎</button>
-                  <button className="lqc-log-del" type="button" onClick={() => onDeleteEvent(e.event_id)} aria-label="삭제">✕</button>
+                  <button className="lqc-log-edit" type="button" onClick={() => startEdit(e)}>수정</button>
+                  <button className="lqc-log-del" type="button" onClick={() => onDeleteEvent(e.event_id)}>삭제</button>
                 </div>
               ))}
             </div>

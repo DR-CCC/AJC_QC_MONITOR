@@ -51,20 +51,20 @@ export default function LineStatusTable({ lines, floor, onSelectLine }) {
                   <span className="line-badge">{row.line}</span>
                   {row.hasLiveData && <span className="live-badge">{t('liveTag')}</span>}
                 </td>
-                <td style={{ color: '#718096', fontSize: 11 }}>
+                <td style={{ color: '#8A93A0', fontSize: 11 }}>
                   {row.sourceLines?.length ? row.sourceLines.join(', ') : '-'}
                 </td>
-                <td style={{ color: '#a0aec0' }}>{row.product_code || '-'}</td>
+                <td style={{ color: '#4A5260' }}>{row.product_code || '-'}</td>
                 <td>
                   {noData ? (
-                    <span style={{ color: '#4a5568', fontStyle: 'italic' }}>
+                    <span style={{ color: '#8A93A0', fontStyle: 'italic' }}>
                       {t('noFgqcRecord')}
                     </span>
                   ) : (
                     row.item_name || '-'
                   )}
                   {!noData && row.color ? (
-                    <span style={{ color: '#4a5568', fontSize: 11 }}> - {row.color}</span>
+                    <span style={{ color: '#8A93A0', fontSize: 11 }}> - {row.color}</span>
                   ) : null}
                 </td>
                 <td style={{ fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}>
@@ -74,14 +74,14 @@ export default function LineStatusTable({ lines, floor, onSelectLine }) {
                   style={{
                     fontVariantNumeric: 'tabular-nums',
                     textAlign: 'right',
-                    color: noData ? '#4a5568' : '#fc8181',
+                    color: noData ? '#8A93A0' : '#DC2626',
                   }}
                 >
                   {noData ? '-' : row.defective_qty}
                 </td>
                 <td>
                   {noData ? (
-                    <span style={{ color: '#4a5568' }}>-</span>
+                    <span style={{ color: '#8A93A0' }}>-</span>
                   ) : (
                     <div className="rate-cell">
                       <span
@@ -105,7 +105,7 @@ export default function LineStatusTable({ lines, floor, onSelectLine }) {
                       className="qc-open-btn"
                       onClick={() => onSelectLine(row.line)}
                     >
-                      QC →
+                      QC
                     </button>
                   </td>
                 )}

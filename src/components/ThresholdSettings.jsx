@@ -30,7 +30,7 @@ export default function ThresholdSettings({ thresholds, onSave }) {
       return;
     }
     if (w >= c) {
-      setError('WARNING은 CRITICAL보다 낮아야 합니다.');
+      setError('경고 기준은 위험 기준보다 낮아야 합니다.');
       return;
     }
     const next = { warningRate: w / 100, criticalRate: c / 100 };
@@ -55,18 +55,18 @@ export default function ThresholdSettings({ thresholds, onSave }) {
       <button
         className={`threshold-btn${isModified ? ' modified' : ''}`}
         onClick={() => setOpen(p => !p)}
-        title="Alert threshold settings"
+        title="알림 임계값 설정"
       >
-        ⚙ {isModified
-          ? `${(thresholds.warningRate * 100).toFixed(0)}% / ${(thresholds.criticalRate * 100).toFixed(0)}%`
-          : 'Threshold'}
+        {isModified
+          ? `임계값 ${(thresholds.warningRate * 100).toFixed(0)}% / ${(thresholds.criticalRate * 100).toFixed(0)}%`
+          : '임계값 설정'}
       </button>
 
       {open && (
         <div className="threshold-panel">
-          <div className="threshold-panel-title">Alert Thresholds</div>
+          <div className="threshold-panel-title">알림 임계값</div>
           <div className="threshold-row">
-            <label className="threshold-label warn-label">WARNING ≥</label>
+            <label className="threshold-label warn-label">경고 이상</label>
             <input
               type="number"
               className="threshold-input"
@@ -79,7 +79,7 @@ export default function ThresholdSettings({ thresholds, onSave }) {
             <span className="threshold-unit">%</span>
           </div>
           <div className="threshold-row">
-            <label className="threshold-label crit-label">CRITICAL ≥</label>
+            <label className="threshold-label crit-label">위험 이상</label>
             <input
               type="number"
               className="threshold-input"

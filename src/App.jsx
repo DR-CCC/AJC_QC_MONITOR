@@ -184,54 +184,50 @@ export default function App() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <a href="/dashboard.html" className="back-to-dashboard-btn">← 생산 대시보드</a>
           <div className="live-dot" />
-          <h1>AJS QC Monitor</h1>
+          <h1>AJS QC 모니터</h1>
           <span className={`badge${isDemoMode ? ' badge-demo' : ''}`}>
-            {isDemoMode ? '2025 Demo Data' : 'Live Entry Mode'}
+            {isDemoMode ? '데모 모드' : '실시간 입력'}
           </span>
         </div>
         <div className="header-right">
           {criticalCount > 0 && (
-            <span style={{ fontSize: 12, color: '#fc8181', fontWeight: 700 }}>
-              ● {criticalCount} CRITICAL
-            </span>
+            <span className="header-severity-badge danger">위험 {criticalCount}</span>
           )}
           {warnCount > 0 && (
-            <span style={{ fontSize: 12, color: '#f6ad55', fontWeight: 600 }}>
-              ▲ {warnCount} WARNING
-            </span>
+            <span className="header-severity-badge warn">경고 {warnCount}</span>
           )}
           <ThresholdSettings thresholds={thresholds} onSave={setThresholds} />
           <button
             className={`demo-toggle${isDemoMode ? ' active' : ''}`}
             onClick={() => setIsDemoMode(prev => !prev)}
           >
-            {isDemoMode ? '● Demo ON' : 'Demo OFF'}
+            {isDemoMode ? '데모 켜짐' : '데모 모드'}
           </button>
           <ExportButton events={extraEvents} />
           <span className="header-time">
-            {now.toLocaleTimeString('en-US', { hour12: false })}
+            {now.toLocaleTimeString('ko-KR', { hour12: false })}
           </span>
         </div>
       </header>
 
       <div className="floor-filter">
         {[
-          [FLOOR_ALL, 'All Lines'],
-          [FLOOR_1, 'Floor 1 · L1-L8'],
-          [FLOOR_2, 'Floor 2 · L21-L29'],
+          [FLOOR_ALL, '전체 라인'],
+          [FLOOR_1, '1층 · L1~L8'],
+          [FLOOR_2, '2층 · L21~L29'],
         ].map(([value, label]) => (
           <button
             key={value}
             className={`floor-btn${floor === value ? ' active' : ''}`}
             onClick={() => setFloor(value)}
           >
-            {value === FLOOR_2 && hasFloor2Data ? `${label} ●` : label}
+            {value === FLOOR_2 && hasFloor2Data ? `${label} ·` : label}
           </button>
         ))}
       </div>
 
       {isDemoMode && demoLoading && (
-        <div className="loading-state">Loading 2025 demo data...</div>
+        <div className="loading-state">데모 데이터 불러오는 중...</div>
       )}
 
       <div className="app-body">
@@ -248,7 +244,7 @@ export default function App() {
               className={`tab-btn${sideTab === TAB_DASHBOARD ? ' active' : ''}`}
               onClick={() => setSideTab(TAB_DASHBOARD)}
             >
-              Alerts
+              알림
               {visibleAlerts.length > 0 && (
                 <span className="alert-count-badge">{visibleAlerts.length}</span>
               )}
@@ -257,15 +253,15 @@ export default function App() {
               className={`tab-btn${sideTab === TAB_INPUT ? ' active' : ''}`}
               onClick={() => setSideTab(TAB_INPUT)}
             >
-              + New Entry
+              불량 입력
             </button>
           </div>
 
           {sideTab === TAB_DASHBOARD && (
             <>
               {extraEvents.length > 0 && (
-                <div style={{ padding: '7px 14px', borderBottom: '1px solid #2d3748', fontSize: 11, color: '#68d391' }}>
-                  {extraEvents.length} event{extraEvents.length !== 1 ? 's' : ''} logged today
+                <div style={{ padding: '7px 14px', borderBottom: '1px solid #E4E7EC', fontSize: 11, color: '#16A34A' }}>
+                  오늘 {extraEvents.length}건 입력됨
                 </div>
               )}
               <AlertPanel alerts={visibleAlerts} />
