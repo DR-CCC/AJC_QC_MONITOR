@@ -150,6 +150,7 @@ export default function App() {
         line={selectedLine}
         allEvents={extraEvents}
         onAddEvent={handleNewEvent}
+        onUpdateEvent={handleEditEvent}
         onDeleteEvent={handleDeleteEvent}
         catalog={catalogData}
         lineAlerts={lineAlerts}

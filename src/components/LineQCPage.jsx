@@ -3,8 +3,30 @@ import { loadLineSession, saveLineSession } from '../data/lineSessionStorage';
 
 const PROCESSES = Array.from({ length: 17 }, (_, i) => `공정 ${i + 1}`);
 
+function defNumFromCode(code) {
+  if (!code) return '';
+  const m = (code || '').match(/DEF-(\d+)/i);
+  return m ? String(parseInt(m[1], 10)) : '';
+}
+
+function defCodeFromNum(num) {
+  const n = parseInt(num, 10);
+  if (!n || n < 1) return null;
+  return `DEF-${String(n).padStart(2, '0')}`;
+}
+
+const EMPTY_FORM = { process: PROCESSES[0], defCodeNum: '', defect_count: '' };
+
+function formFromEvent(evt) {
+  return {
+    process: PROCESSES.includes(evt.process) ? evt.process : PROCESSES[0],
+    defCodeNum: defNumFromCode(evt.defect_code),
+    defect_count: String(evt.defect_count ?? ''),
+  };
+}
+
 export default function LineQCPage({
-  line, allEvents, onAddEvent, onDeleteEvent,
+  line, allEvents, onAddEvent, onUpdateEvent, onDeleteEvent,
   catalog, lineAlerts, onBack, now,
 }) {
   const [session, setSession] = useState(() => loadLineSession(line));
@@ -13,7 +35,8 @@ export default function LineQCPage({
     return !s.product_code && !s.inspection_qty;
   });
   const [sessionDraft, setSessionDraft] = useState(() => loadLineSession(line));
-  const [form, setForm] = useState({ process: PROCESSES[0], defect_code: '', defect_count: '' });
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [editingEvent, setEditingEvent] = useState(null);
   const [toast, setToast] = useState('');
 
   const lineEvents = useMemo(
@@ -23,14 +46,31 @@ export default function LineQCPage({
     [allEvents, line],
   );
 
-  // inspection_qty is committed on the first entry; subsequent entries use 0
   const hasCommittedQty = useMemo(
     () => lineEvents.some(e => Number(e.inspection_qty || 0) > 0),
     [lineEvents],
   );
 
+  const resolvedDef = useMemo(() => {
+    const code = defCodeFromNum(form.defCodeNum);
+    if (!code) return null;
+    return catalog.find(c => c.code === code) || null;
+  }, [form.defCodeNum, catalog]);
+
+  const defError = useMemo(() => {
+    if (!form.defCodeNum) return null;
+    const n = parseInt(form.defCodeNum, 10);
+    if (isNaN(n) || n < 1 || n > 99) return '1~99 사이 숫자를 입력하세요';
+    if (!resolvedDef) return `DEF-${String(n).padStart(2, '0')} 코드가 없습니다`;
+    return null;
+  }, [form.defCodeNum, resolvedDef]);
+
   const criticalCount = lineAlerts.filter(a => a.severity === 'critical').length;
   const warnCount = lineAlerts.filter(a => a.severity === 'warning').length;
+
+  function setF(field, value) {
+    setForm(prev => ({ ...prev, [field]: value }));
+  }
 
   function openSessionEdit() {
     setSessionDraft({ ...session });
@@ -43,25 +83,57 @@ export default function LineQCPage({
     setEditingSession(false);
   }
 
+  function startEdit(evt) {
+    setEditingEvent(evt);
+    setForm(formFromEvent(evt));
+    setEditingSession(false);
+  }
+
+  function cancelEdit() {
+    setEditingEvent(null);
+    setForm(EMPTY_FORM);
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
-    if (!form.defect_code || !form.defect_count) return;
-    const inspQty = hasCommittedQty ? 0 : Number(session.inspection_qty || 0);
-    const event = {
-      event_id: `evt-${Date.now()}`,
-      created_at: new Date().toISOString(),
-      line,
-      process: form.process,
-      worker_id: session.worker_id,
-      product_code: session.product_code,
-      item_name: session.item_name,
-      defect_code: form.defect_code,
-      defect_count: Number(form.defect_count),
-      inspection_qty: inspQty,
-    };
-    onAddEvent(event);
-    setForm(prev => ({ ...prev, defect_count: '' }));
-    setToast(`✓ ${form.defect_code} × ${form.defect_count}`);
+    if (!resolvedDef || defError || !form.defect_count) return;
+
+    if (!editingEvent && !hasCommittedQty && !session.inspection_qty) {
+      setEditingSession(true);
+      setSessionDraft({ ...session });
+      setToast('⚠ 검사수량을 먼저 입력해 주세요');
+      setTimeout(() => setToast(''), 3000);
+      return;
+    }
+
+    if (editingEvent) {
+      onUpdateEvent?.({
+        ...editingEvent,
+        process: form.process,
+        defect_code: resolvedDef.code,
+        defect_count: Number(form.defect_count),
+        updated_at: new Date().toISOString(),
+      });
+      setToast(`✓ 수정: ${resolvedDef.code} × ${form.defect_count}`);
+      setEditingEvent(null);
+      setForm(EMPTY_FORM);
+    } else {
+      const inspQty = hasCommittedQty ? 0 : Number(session.inspection_qty || 0);
+      onAddEvent({
+        event_id: `evt-${Date.now()}`,
+        created_at: new Date().toISOString(),
+        line,
+        process: form.process,
+        worker_id: session.worker_id,
+        product_code: session.product_code,
+        item_name: session.item_name,
+        defect_code: resolvedDef.code,
+        defect_count: Number(form.defect_count),
+        inspection_qty: inspQty,
+      });
+      setForm(prev => ({ ...prev, defect_count: '' }));
+      setToast(`✓ ${resolvedDef.code} × ${form.defect_count}`);
+    }
     setTimeout(() => setToast(''), 2500);
   }
 
@@ -91,7 +163,7 @@ export default function LineQCPage({
 
       <div className="lqc-body">
 
-        {/* Session info card */}
+        {/* Session info */}
         <div className="lqc-session-card">
           <div className="lqc-session-hdr">
             <span className="lqc-section-label">세션 정보</span>
@@ -99,7 +171,6 @@ export default function LineQCPage({
               <button className="lqc-session-edit-btn" onClick={openSessionEdit}>수정</button>
             )}
           </div>
-
           {!editingSession ? (
             <div className="lqc-session-chips">
               <span className="lqc-chip">
@@ -141,14 +212,9 @@ export default function LineQCPage({
               </div>
               <div className="lqc-srow">
                 <label>검사 수량</label>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  placeholder="240"
+                <input type="number" inputMode="numeric" pattern="[0-9]*" placeholder="240"
                   value={sessionDraft.inspection_qty}
-                  onChange={e => setSessionDraft(p => ({ ...p, inspection_qty: e.target.value }))}
-                />
+                  onChange={e => setSessionDraft(p => ({ ...p, inspection_qty: e.target.value }))} />
               </div>
               <div className="lqc-session-actions">
                 <button className="lqc-session-cancel" type="button" onClick={() => setEditingSession(false)}>취소</button>
@@ -158,7 +224,7 @@ export default function LineQCPage({
           )}
         </div>
 
-        {/* Line-specific alerts */}
+        {/* Line alerts */}
         {lineAlerts.length > 0 && (
           <div className="lqc-alerts-section">
             {lineAlerts.map(a => (
@@ -170,34 +236,66 @@ export default function LineQCPage({
           </div>
         )}
 
-        {/* Quick entry form */}
+        {/* Quick entry / edit form */}
         <div className="lqc-entry-card">
-          <div className="lqc-section-label" style={{ marginBottom: 14 }}>불량 입력</div>
+          {editingEvent ? (
+            <div className="lqc-edit-banner">
+              <span>
+                수정 중: <strong>{editingEvent.defect_code}</strong> ·{' '}
+                {new Date(editingEvent.created_at).toLocaleTimeString('ko-KR', {
+                  hour: '2-digit', minute: '2-digit', hour12: false,
+                })}
+              </span>
+              <button className="lqc-cancel-edit" type="button" onClick={cancelEdit}>취소</button>
+            </div>
+          ) : (
+            <div className="lqc-section-label" style={{ marginBottom: 14 }}>불량 입력</div>
+          )}
+
           <form className="lqc-quick-form" onSubmit={handleSubmit} autoComplete="off">
+            {/* Process */}
             <div className="lqc-qfield">
               <label>공정</label>
-              <select
-                value={form.process}
-                onChange={e => setForm(p => ({ ...p, process: e.target.value }))}
-              >
+              <select value={form.process} onChange={e => setF('process', e.target.value)}>
                 {PROCESSES.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
             </div>
+
+            {/* DEF code number input */}
             <div className="lqc-qfield lqc-qfield-def">
-              <label>불량 코드</label>
-              <select
-                value={form.defect_code}
-                onChange={e => setForm(p => ({ ...p, defect_code: e.target.value }))}
-                required
-              >
-                <option value="">선택</option>
-                {catalog.map(c => (
-                  <option key={c.code} value={c.code}>
-                    {c.code} · {c.name}
-                  </option>
-                ))}
-              </select>
+              <label>불량코드 (번호)</label>
+              <div className="lqc-def-row">
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  min="1"
+                  max="99"
+                  placeholder="11"
+                  value={form.defCodeNum}
+                  onChange={e => setF('defCodeNum', e.target.value)}
+                  required
+                  className="lqc-defnum-input"
+                />
+                <div className="lqc-def-preview">
+                  {resolvedDef ? (
+                    <>
+                      <span className="lqc-def-code">{resolvedDef.code}</span>
+                      <span className="lqc-def-name">{resolvedDef.name}</span>
+                      {resolvedDef.category_label && (
+                        <span className="lqc-def-cat">[{resolvedDef.category_label}]</span>
+                      )}
+                    </>
+                  ) : defError ? (
+                    <span className="lqc-def-err">{defError}</span>
+                  ) : (
+                    <span className="lqc-def-hint">1~43 입력</span>
+                  )}
+                </div>
+              </div>
             </div>
+
+            {/* Defect count */}
             <div className="lqc-qfield lqc-qfield-count">
               <label>불량 수</label>
               <input
@@ -207,17 +305,24 @@ export default function LineQCPage({
                 min="1"
                 placeholder="0"
                 value={form.defect_count}
-                onChange={e => setForm(p => ({ ...p, defect_count: e.target.value }))}
+                onChange={e => setF('defect_count', e.target.value)}
                 required
                 className="lqc-count-input"
               />
             </div>
-            <button type="submit" className="lqc-submit-btn">+ 입력</button>
+
+            <button
+              type="submit"
+              className={`lqc-submit-btn${editingEvent ? ' editing' : ''}`}
+              disabled={!!defError || !resolvedDef}
+            >
+              {editingEvent ? '수정 완료' : '+ 입력'}
+            </button>
           </form>
           {toast && <div className="lqc-toast">{toast}</div>}
         </div>
 
-        {/* Today's entry log */}
+        {/* Entry log */}
         <div className="lqc-log-card">
           <div className="lqc-section-label">
             오늘 입력 내역 · {line}
@@ -232,7 +337,10 @@ export default function LineQCPage({
           ) : (
             <div className="lqc-log-list">
               {lineEvents.map(e => (
-                <div key={e.event_id} className="lqc-log-row">
+                <div
+                  key={e.event_id}
+                  className={`lqc-log-row${editingEvent?.event_id === e.event_id ? ' editing' : ''}`}
+                >
                   <span className="lqc-log-time">
                     {new Date(e.created_at).toLocaleTimeString('ko-KR', {
                       hour: '2-digit', minute: '2-digit', hour12: false,
@@ -244,6 +352,14 @@ export default function LineQCPage({
                   {Number(e.inspection_qty) > 0 && (
                     <span className="lqc-log-qty">검사 {Number(e.inspection_qty).toLocaleString()}</span>
                   )}
+                  <button
+                    className="lqc-log-edit"
+                    type="button"
+                    onClick={() => startEdit(e)}
+                    aria-label="수정"
+                  >
+                    ✎
+                  </button>
                   <button
                     className="lqc-log-del"
                     type="button"
