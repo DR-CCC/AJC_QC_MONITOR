@@ -518,7 +518,6 @@ body {
 .filter-select:focus { outline: none; border-color: var(--blue); }
 
 /* ── Live alert styling ── */
-.alert-item.live { border-left-color: var(--ok); background: var(--ok-soft); }
 .live-tag {
   font-size: 9px;
   font-weight: 700;
