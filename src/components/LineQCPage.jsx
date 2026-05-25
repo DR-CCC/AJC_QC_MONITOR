@@ -26,13 +26,13 @@ function formFromEvent(evt) {
   };
 }
 
-// DEF 코드 카테고리별 색상
+// DEF 코드 카테고리별 색상 (자명_B 라이트 테마)
 const CAT_COLORS = {
-  Stitching:  '#90cdf4',
-  Material:   '#68d391',
-  Assembly:   '#f6ad55',
-  Finishing:  '#d6bcfa',
-  Safety:     '#fc8181',
+  Stitching:  '#2A8FCB',
+  Material:   '#16A34A',
+  Assembly:   '#D97706',
+  Finishing:  '#9333EA',
+  Safety:     '#DC2626',
 };
 
 export default function LineQCPage({
